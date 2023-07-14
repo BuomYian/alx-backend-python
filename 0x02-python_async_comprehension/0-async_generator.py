@@ -11,7 +11,6 @@ from typing import AsyncIterator
 async def async_generator() -> AsyncIterator[float]:
     """
     Coroutine that generates random numbers asynchronously.
-
     Yields:
         float: Random number between 0 and 10.
     """
