@@ -11,10 +11,10 @@ async_comprehension = __import__('1-async_comprehension').async_comprehension
 
 async def measure_runtime() -> float:
     """
-    Coroutine that executes async_comprehension 4 times in parallel
+    Coroutine that executes async_comprehension 4 times
 
     returns:
-        float: Total runtime of executing async comprehension 
+        float: Total runtime of executing async comprehension
     """
     start_time = perf_counter()
 

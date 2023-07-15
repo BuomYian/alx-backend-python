@@ -5,10 +5,10 @@ A coroutine that take no arguments
 
 import asyncio
 import random
-from typing import AsyncIterator
+import typing
 
 
-async def async_generator() -> AsyncIterator[float]:
+async def async_generator() -> typing.AsyncIterator[float]:
     """
     Coroutine that generates random numbers asynchronously.
 
