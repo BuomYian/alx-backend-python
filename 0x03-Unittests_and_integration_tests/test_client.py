@@ -8,26 +8,19 @@ from client import GithubOrgClient
 
 
 class TestGithubOrgClient(unittest.TestCase):
-    """Tests the `test_org` function"""
+    """Tests the `GithubOrgClient` class."""
     @parameterized.expand([
-        ("google",),
-        ("abc",),
+        ("google", {'login': "google"}),
+        ("abc", {'login': "abc"}),
     ])
-    @patch('client.get_json', autospec=True)
-    def test_org(self, org_name, mock_get_json):
+    @patch(
+        "client.get_json",
+    )
+    def test_org(self, org: str, resp, mocked_fxn) -> None:
         """Tests the `org` method."""
-        # Create a GithubOrgClient instance
-        client = GithubOrgClient(org_name)
-
-        # Call the org method
-        result = client.org()
-
-        # Ensure that get_json is called once with the expected URL
-        mock_get_json.assert_called_once_with(
-            f"https://api.github.com/orgs/{org_name}")
-
-        # Ensure that get_json is not executed
-        mock_get_json.return_value = None
-
-        # Ensure that the result is correct
-        self.assertEqual(result, mock_get_json.return_value)
+        mocked_fxn.return_value = mocked_fxn(return_value=resp)
+        gh_org_client = GithubOrgClient(org)
+        self.assertEqual(gh_org_client.org(), resp)
+        mocked_fxn.assert_called_once_with(
+            "https://api.github.com/orgs/{}".format(org)
+        )
