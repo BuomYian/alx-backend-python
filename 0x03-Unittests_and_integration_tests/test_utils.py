@@ -15,6 +15,7 @@ class TestAccessNestedMap(unittest.TestCase):
         ({"a": {"b": 2}}, ("a", "b"), 2)
     ])
     def test_access_nested_map(self, nested_map, path, expected_result):
+        """Tests the `access_nested_map` function."""
         self.assertEqual(access_nested_map(nested_map, path), expected_result)
 
     @parameterized.expand([
@@ -50,7 +51,7 @@ class TestGetJson(unittest.TestCase):
         # Call the function to be tested
         result = get_json(test_url)
 
-        # Assert that the mocked get method was called exactly once with the test_url argument
+        # Assert that the mocked get method was called exactly once
         mock_get.assert_called_once_with(test_url)
 
         # Assert that the result of get_json is equal to the test_payload
