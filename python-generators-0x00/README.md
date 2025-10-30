@@ -14,6 +14,7 @@ This project is part of the ALX Backend Python curriculum and demonstrates datab
 - Understand generator functions and the `yield` keyword for memory-efficient data streaming
 - Implement batch processing for large datasets
 - Implement lazy pagination for efficient data retrieval
+- Implement memory-efficient aggregation using generators
 
 ## Features
 
@@ -25,6 +26,7 @@ This project is part of the ALX Backend Python curriculum and demonstrates datab
 - **Generator Streaming**: Efficiently streams database rows one at a time using Python generators
 - **Batch Processing**: Processes large datasets in configurable batches with filtering capabilities
 - **Lazy Pagination**: Retrieves data in pages on-demand for efficient memory usage
+- **Memory-Efficient Aggregation**: Calculates aggregate functions without loading entire datasets into memory
 - **Error Handling**: Comprehensive error handling for database operations
 
 ## Project Structure
@@ -39,6 +41,8 @@ This project is part of the ALX Backend Python curriculum and demonstrates datab
 ├── 2-main.py # Test script for batch processing
 ├── 2-lazy_paginate.py # Lazy pagination with generators
 ├── 3-main.py # Test script for lazy pagination
+├── 4-stream_ages.py # Memory-efficient aggregation with generators
+├── 5-main.py # Test script for aggregation
 ├── user_data.csv # Sample user data in CSV format
 └── README.md # This file
 ```
@@ -142,6 +146,51 @@ Test script for lazy pagination:
 - Iterates through each page and prints individual user records
 - Handles `BrokenPipeError` for piping output to other commands (e.g., `head`)
 - Demonstrates memory-efficient pagination for large datasets
+
+### 4-stream_ages.py
+
+Memory-efficient aggregation module with two functions:
+
+- **`stream_user_ages()`**: A generator function that yields user ages one by one
+  - Connects to the database and executes a SELECT query for ages only
+  - Uses the `yield` keyword to return ages one at a time
+  - Automatically closes the cursor and connection after all ages are yielded
+  - Returns: Generator object that yields individual user ages
+- **`average_age()`**: Calculates the average age without loading all data into memory
+  - Uses the `stream_user_ages()` generator to iterate through ages
+  - Maintains only a running total and count in memory
+  - Returns: Float representing the average age, or None if no users exist
+  - Demonstrates memory-efficient aggregation for large datasets
+
+### 5-main.py
+
+Test script for memory-efficient aggregation:
+
+- Calls `average_age()` to calculate the average age of all users
+- Prints the result in the format: "Average age of users: {average_age}"
+- Demonstrates how to use generators for computing aggregate functions efficiently
+
+### Using Memory-Efficient Aggregation in Your Code
+
+```python
+from 4-stream_ages import stream_user_ages, average_age
+
+# Calculate average age
+
+avg = average_age()
+print(f"Average age: {avg}")
+
+# Or manually iterate through ages
+
+total = 0
+count = 0
+for age in stream_user_ages():
+total += age
+count += 1
+
+manual_avg = total / count if count > 0 else 0
+print(f"Manual average: {manual_avg}")
+```
 
 ### Using Lazy Pagination in Your Code
 
@@ -254,6 +303,16 @@ Lazy pagination retrieves data in pages on-demand, which is useful for:
 
 The `paginate_users()` function fetches a single page of users, while `lazy_pagination()` yields pages one at a time as needed.
 
+### Memory-Efficient Aggregation
+
+Memory-efficient aggregation computes aggregate functions (like average, sum, count) without loading the entire dataset into memory. This is achieved by:
+
+- Using generators to stream individual values one at a time
+- Maintaining only running totals and counts in memory
+- Processing values as they arrive from the database
+
+The `stream_user_ages()` generator yields ages one at a time, while `average_age()` computes the average using only a running total and count, making it suitable for datasets with millions of records.
+
 ### Error Handling
 
 All database operations include try-except blocks to catch and report errors gracefully, making debugging easier.
@@ -307,6 +366,12 @@ When you run \`3-main.py\`, you should see output similar to:
 {'user_id': '01187f09-72be-4924-8a2d-150645dcadad', 'name': 'Jonathon Jones', 'email': 'Jody.Quigley-Ziemann33@yahoo.com', 'age': 116}
 ```
 
+When you run \`5-main.py\`, you should see output similar to:
+
+```
+Average age of users: 67.42
+```
+
 ## Troubleshooting
 
 ### Connection Error
@@ -343,6 +408,7 @@ After completing this project, you will understand:
 - Filtering and transforming data in batches
 - Lazy pagination for efficient data retrieval
 - LIMIT and OFFSET in SQL queries for pagination
+- Memory-efficient aggregation for computing aggregate functions
 - Performance optimization for database operations
 
 ## License
