@@ -13,6 +13,7 @@ This project is part of the ALX Backend Python curriculum and demonstrates datab
 - Practice using Python generators and database operations
 - Understand generator functions and the `yield` keyword for memory-efficient data streaming
 - Implement batch processing for large datasets
+- Implement lazy pagination for efficient data retrieval
 
 ## Features
 
@@ -23,6 +24,7 @@ This project is part of the ALX Backend Python curriculum and demonstrates datab
 - **UUID Generation**: Automatically generates unique identifiers for each user
 - **Generator Streaming**: Efficiently streams database rows one at a time using Python generators
 - **Batch Processing**: Processes large datasets in configurable batches with filtering capabilities
+- **Lazy Pagination**: Retrieves data in pages on-demand for efficient memory usage
 - **Error Handling**: Comprehensive error handling for database operations
 
 ## Project Structure
@@ -35,6 +37,8 @@ This project is part of the ALX Backend Python curriculum and demonstrates datab
 ├── 1-main.py # Test script demonstrating the generator
 ├── 1-batch_processing.py # Batch processing with generators and filtering
 ├── 2-main.py # Test script for batch processing
+├── 2-lazy_paginate.py # Lazy pagination with generators
+├── 3-main.py # Test script for lazy pagination
 ├── user_data.csv # Sample user data in CSV format
 └── README.md # This file
 ```
@@ -115,111 +119,47 @@ Test script for batch processing:
 - Filters and displays only users over age 25
 - Handles `BrokenPipeError` for piping output to other commands (e.g., `head`)
 
-### user_data.csv
+### 2-lazy_paginate.py
 
-Sample data file containing 20 user records with the following columns:
+Lazy pagination module with two functions:
 
-- `name`: User's full name
-- `email`: User's email address
-- `age`: User's age
+- **`paginate_users(page_size, offset)`**: Fetches a single page of users from the database
+  - Parameters: `page_size` (number of users per page), `offset` (starting position)
+  - Returns: List of user dictionaries for the requested page
+  - Connects to the database, executes a SELECT query with LIMIT and OFFSET, and returns results
+- **`lazy_pagination(page_size)`**: A generator that lazily loads pages one at a time
+  - Uses the `yield` keyword to return pages as they are requested
+  - Only fetches the next page when needed (lazy loading)
+  - Starts at offset 0 and increments by page_size for each iteration
+  - Stops when no more records are available
+  - Returns: Generator object that yields lists of user dictionaries
 
-## Requirements
+### 3-main.py
 
-- Python 3.x
-- MySQL Server (running on localhost)
-- `mysql-connector-python` package
+Test script for lazy pagination:
 
-## Installation
+- Calls `lazy_pagination(100)` to load users in pages of 100
+- Iterates through each page and prints individual user records
+- Handles `BrokenPipeError` for piping output to other commands (e.g., `head`)
+- Demonstrates memory-efficient pagination for large datasets
 
-1. Install the required Python package:
-
-   ```bash
-   pip install mysql-connector-python
-   ```
-
-2. Ensure MySQL Server is running on your system
-
-3. Place all files in the same directory
-
-## Usage
-
-### Basic Usage - Database Setup
-
-Run the main test script to set up the database:
-
-```bash
-python3 0-main.py
-```
-
-This will:
-
-- Create the database and table
-- Insert all user data from the CSV file
-- Display the first 5 records
-
-### Using the Generator
-
-Run the generator test script:
-
-```bash
-python3 1-main.py
-```
-
-This will stream and display the first 6 users from the database one at a time.
-
-### Using Batch Processing
-
-Run the batch processing test script:
-
-```bash
-python3 2-main.py
-```
-
-This will process users in batches of 50 and display only those over age 25.
-
-You can also pipe the output to other commands:
-
-```bash
-python3 2-main.py | head -n 5
-```
-
-### Using the Generator in Your Code
+### Using Lazy Pagination in Your Code
 
 ```python
-from itertools import islice
-from 0-stream_users import stream_users
+from 2-lazy_paginate import lazy_pagination
 
-# Stream all users
+# Paginate through all users in pages of 50
 
-for user in stream_users():
+for page in lazy_pagination(50):
+print(f"Processing page with {len(page)} users")
+for user in page:
 print(user)
 
-# Stream only the first 10 users
+# Paginate through users in pages of 100
 
-for user in islice(stream_users(), 10):
-print(user)
-
-# Stream users from index 5 to 15
-
-for user in islice(stream_users(), 5, 15):
-print(user)
-```
-
-### Using Batch Processing in Your Code
-
-```python
-from 1-batch_processing import stream_users_in_batches, batch_processing
-
-# Process users in batches of 100
-
-batch_processing(100)
-
-# Or use the generator directly
-
-for batch in stream_users_in_batches(50):
-print(f"Processing batch of {len(batch)} users")
-for user in batch:
-if user['age'] > 25:
+for page in lazy_pagination(100):
+for user in page:
+if user['age'] > 30:
 print(user)
 ```
 
@@ -304,6 +244,16 @@ Batch processing divides large datasets into smaller, manageable chunks. This ap
 
 The `stream_users_in_batches()` function demonstrates how to efficiently fetch and yield batches of records, while `batch_processing()` shows how to apply filtering logic to each batch.
 
+### Lazy Pagination
+
+Lazy pagination retrieves data in pages on-demand, which is useful for:
+
+- Handling large datasets without loading everything into memory
+- Efficiently managing memory usage
+- Improving performance by fetching data in smaller chunks
+
+The `paginate_users()` function fetches a single page of users, while `lazy_pagination()` yields pages one at a time as needed.
+
 ### Error Handling
 
 All database operations include try-except blocks to catch and report errors gracefully, making debugging easier.
@@ -346,6 +296,17 @@ When you run \`2-main.py\`, you should see output similar to:
 {'user_id': '01187f09-72be-4924-8a2d-150645dcadad', 'name': 'Jonathon Jones', 'email': 'Jody.Quigley-Ziemann33@yahoo.com', 'age': 116}
 ```
 
+When you run \`3-main.py\`, you should see output similar to:
+
+```
+{'user_id': '00234e50-34eb-4ce2-94ec-26e3fa749796', 'name': 'Dan Altenwerth Jr.', 'email': 'Molly59@gmail.com', 'age': 67}
+{'user_id': '006bfede-724d-4cdd-a2a6-59700f40d0da', 'name': 'Glenda Wisozk', 'email': 'Miriam21@gmail.com', 'age': 119}
+{'user_id': '006e1f7f-90c2-45ad-8c1d-1275d594cc88', 'name': 'Daniel Fahey IV', 'email': 'Delia.Lesch11@hotmail.com', 'age': 49}
+{'user_id': '00af05c9-0a86-419e-8c2d-5fb7e899ae1c', 'name': 'Ronnie Bechtelar', 'email': 'Sandra19@yahoo.com', 'age': 22}
+{'user_id': '00cc08cc-62f4-4da1-b8e4-f5d9ef5dbbd4', 'name': 'Alma Bechtelar', 'email': 'Shelly_Balistreri22@hotmail.com', 'age': 102}
+{'user_id': '01187f09-72be-4924-8a2d-150645dcadad', 'name': 'Jonathon Jones', 'email': 'Jody.Quigley-Ziemann33@yahoo.com', 'age': 116}
+```
+
 ## Troubleshooting
 
 ### Connection Error
@@ -380,6 +341,8 @@ After completing this project, you will understand:
 - Using \`itertools\` for advanced iteration patterns
 - Batch processing for large datasets
 - Filtering and transforming data in batches
+- Lazy pagination for efficient data retrieval
+- LIMIT and OFFSET in SQL queries for pagination
 - Performance optimization for database operations
 
 ## License
