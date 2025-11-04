@@ -1,6 +1,6 @@
-#!/usr/bin/python3
 import sqlite3
 import functools
+from datetime import datetime
 
 
 def log_queries(func):
@@ -19,7 +19,8 @@ def log_queries(func):
         else:
             query = "Query not found"
 
-        print(f"Executing query: {query}")
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        print(f"[{timestamp}] Executing query: {query}")
 
         return func(*args, **kwargs)
 
