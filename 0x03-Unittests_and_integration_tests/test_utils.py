@@ -4,6 +4,7 @@
 import unittest
 from unittest.mock import patch, MagicMock
 from parameterized import parameterized
+from utils import memoize
 
 
 def access_nested_map(nested_map, path):
@@ -98,6 +99,37 @@ class TestGetJson(unittest.TestCase):
 
         mock_get.assert_called_once_with(test_url)
         self.assertEqual(result, test_payload)
+
+
+class TestMemoize(unittest.TestCase):
+    """Test class for memoize decorator."""
+
+    def test_memoize(self):
+        """Test that memoize decorator caches method results.
+
+        Verify that when a memoized property is accessed multiple times,
+        the underlying method is called only once due to caching.
+        """
+        class TestClass:
+            def a_method(self):
+                return 42
+
+            @memoize
+            def a_property(self):
+                return self.a_method()
+
+        with patch.object(TestClass, "a_method", return_value=42):
+            test_obj = TestClass()
+            # Call the memoized property twice
+            result1 = test_obj.a_property
+            result2 = test_obj.a_property
+
+            # Verify both calls return the correct result
+            self.assertEqual(result1, 42)
+            self.assertEqual(result2, 42)
+
+            # Verify that a_method was called only once
+            test_obj.a_method.assert_called_once()
 
 
 if __name__ == "__main__":
