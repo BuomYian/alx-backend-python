@@ -49,13 +49,15 @@ class TestGithubOrgClient(unittest.TestCase):
         self.assertEqual(
             client._public_repos_url, expected_repos_url)
 
-    @patch("client.GithubOrgClient._public_repos_url", new_callable=PropertyMock)
+    @patch("client.GithubOrgClient._public_repos_url",
+           new_callable=PropertyMock)
     @patch('client.get_json')
     def test_public_repos(self, mock_get_json, mock_public_repos_url):
         """Test Tha public_repos returns the list of repository names.
 
         This test mocks both the get_json function and  the _public_repos_url
-        to verify that public_repos returns the expected list of repository names.
+        to verify that public_repos returns the expected list of repository
+        names.
 
         Args:
             mock_get_json (MagicMock): Mocked get_json function.
