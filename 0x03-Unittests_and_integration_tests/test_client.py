@@ -222,12 +222,14 @@ expected_repos = TEST_PAYLOAD[0][2]
 apache2_repos = TEST_PAYLOAD[0][3]
 
 
-@parameterized_class(
-    ("org_payload", "repos_payload", "expected_repos", "apache2_repos"),
-    [
-        (org_payload, repos_payload, expected_repos, apache2_repos),
-    ],
-)
+@parameterized_class([
+    {
+        "org_payload": org_payload,
+        "repos_payload": repos_payload,
+        "expected_repos": expected_repos,
+        "apache2_repos": apache2_repos,
+    }
+])
 class TestIntegrationGithubOrgClient(unittest.TestCase):
     """Integration test cases for GithubOrgClient using fixtures"""
 
