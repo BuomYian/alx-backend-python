@@ -211,7 +211,8 @@ TEST_PAYLOAD = [
             }
         ],
         ['episodes.dart', 'cpp-netlib', 'dagger', 'ios-webkit-debug-proxy',
-         'google.github.io', 'kratu', 'build-debian-cloud', 'traceur-compiler', 'firmata.py'],
+         'google.github.io', 'kratu', 'build-debian-cloud', 'traceur-compiler',
+         'firmata.py'],
         ['dagger', 'kratu', 'traceur-compiler', 'firmata.py'],
     )
 ]
@@ -277,7 +278,8 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         self.assertEqual(repos, self.expected_repos)
 
     def test_public_repos_with_license(self):
-        """Integration test for GithubOrgClient.public_repos with license filter
+        """Integration test for GithubOrgClient.public_repos with license 
+        filter
 
         Verifies that public_repos with Apache 2.0 license filter
         returns only repos with Apache 2.0 license.
