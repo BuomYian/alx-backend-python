@@ -2,7 +2,9 @@
 """Tests for client.GithubOrgClient class."""
 import unittest
 from unittest.mock import patch, PropertyMock
-from parameterized import parameterized
+from parameterized import parameterized, parameterized_class
+import requests
+from unittest.mock import MagicMock
 
 from client import GithubOrgClient
 
@@ -107,6 +109,171 @@ class TestGithubOrgClient(unittest.TestCase):
         """
         result = GithubOrgClient.has_license(repo, license_key)
         self.assertEqual(result, expected)
+
+
+# Define fixtures for parameterized_class
+TEST_PAYLOAD = [
+    (
+        {"repos_url": "https://api.github.com/orgs/google/repos"},
+        [
+            {
+                "id": 7697149,
+                "name": "episodes.dart",
+                "license": {
+                    "key": "bsd-3-clause",
+                    "name": "BSD 3-Clause \"New\" or \"Revised\" License",
+                    "spdx_id": "BSD-3-Clause",
+                    "url": "https://api.github.com/licenses/bsd-3-clause",
+                    "node_id": "MDc6TGljZW5zZTA="
+                }
+            },
+            {
+                "id": 7776515,
+                "name": "cpp-netlib",
+                "license": {
+                    "key": "bsl-1.0",
+                    "name": "Boost Software License 1.0",
+                    "spdx_id": "BSL-1.0",
+                    "url": "https://api.github.com/licenses/bsl-1.0",
+                    "node_id": "MDc6TGljZW5zZTI4"
+                }
+            },
+            {
+                "id": 7968417,
+                "name": "dagger",
+                "license": {
+                    "key": "apache-2.0",
+                    "name": "Apache License 2.0",
+                    "spdx_id": "Apache-2.0",
+                    "url": "https://api.github.com/licenses/apache-2.0",
+                    "node_id": "MDc6TGljZW5zZTI="
+                }
+            },
+            {
+                "id": 8165161,
+                "name": "ios-webkit-debug-proxy",
+                "license": {
+                    "key": "other",
+                    "name": "Other",
+                    "spdx_id": "NOASSERTION",
+                    "url": None,
+                    "node_id": "MDc6TGljZW5zZTA="
+                }
+            },
+            {
+                "id": 8459994,
+                "name": "google.github.io",
+                "license": None
+            },
+            {
+                "id": 8566972,
+                "name": "kratu",
+                "license": {
+                    "key": "apache-2.0",
+                    "name": "Apache License 2.0",
+                    "spdx_id": "Apache-2.0",
+                    "url": "https://api.github.com/licenses/apache-2.0",
+                    "node_id": "MDc6TGljZW5zZTI="
+                }
+            },
+            {
+                "id": 8858648,
+                "name": "build-debian-cloud",
+                "license": {
+                    "key": "other",
+                    "name": "Other",
+                    "spdx_id": "NOASSERTION",
+                    "url": None,
+                    "node_id": "MDc6TGljZW5zZTA="
+                }
+            },
+            {
+                "id": 9060347,
+                "name": "traceur-compiler",
+                "license": {
+                    "key": "apache-2.0",
+                    "name": "Apache License 2.0",
+                    "spdx_id": "Apache-2.0",
+                    "url": "https://api.github.com/licenses/apache-2.0",
+                    "node_id": "MDc6TGljZW5zZTI="
+                }
+            },
+            {
+                "id": 9065917,
+                "name": "firmata.py",
+                "license": {
+                    "key": "apache-2.0",
+                    "name": "Apache License 2.0",
+                    "spdx_id": "Apache-2.0",
+                    "url": "https://api.github.com/licenses/apache-2.0",
+                    "node_id": "MDc6TGljZW5zZTI="
+                }
+            }
+        ],
+        ['episodes.dart', 'cpp-netlib', 'dagger', 'ios-webkit-debug-proxy',
+         'google.github.io', 'kratu', 'build-debian-cloud', 'traceur-compiler', 'firmata.py'],
+        ['dagger', 'kratu', 'traceur-compiler', 'firmata.py'],
+    )
+]
+
+org_payload = TEST_PAYLOAD[0][0]
+repos_payload = TEST_PAYLOAD[0][1]
+expected_repos = TEST_PAYLOAD[0][2]
+apache2_repos = TEST_PAYLOAD[0][3]
+
+
+@parameterized_class(
+    ("org_payload", "repos_payload", "expected_repos", "apache2_repos"),
+    [
+        (org_payload, repos_payload,
+         expected_repos, apache2_repos)
+    ]
+)
+class TestIntegrationGithubOrgClient(unittest.TestCase):
+    """Integration test class for GithubOrgClient."""
+    @classmethod
+    def setUpClass(cls):
+        """Set up the test fixtures and mock requests.get.
+
+        This method patches requests.get to return mock 
+        responses based on the URL being requested, avoiding
+        actual HTTP calls during tests.
+        """
+        cls.get_patcher = patch("requests.get")
+        mock_requests_get = cls.get_patcher.start()
+
+        def side_effect_func(url, *args, **kwargs):
+            """Return appropriate mock response based on URL."""
+            mock_reponse = MagicMock()
+
+            if url == "https://api.github.com/orgs/google":
+                mock_reponse.json.return_value = cls.org_payload
+            elif url == cls.org_payload.get("repos_url"):
+                mock_reponse.json.return_value = cls.repos_payload
+
+            return mock_reponse
+
+        mock_requests_get.side_effect = side_effect_func
+
+    @classmethod
+    def tearDownClass(cls):
+        """Stop the requests.get patcher after test are complete.
+
+        This method stops the patch and cleans up the mock
+        """
+        cls.get_patcher.stop()
+
+    def test_public_repos(self):
+        """Test that public_repos returns the expected list of repo names."""
+        client = GithubOrgClient("google")
+        repos = client.public_repos()
+        self.assertEqual(repos, self.expected_repos)
+
+    def test_public_repos_with_license(self):
+        """Test that public_repos with license filter returns expected repos."""
+        client = GithubOrgClient("google")
+        repos = client.public_repos(license="apache-2.0")
+        self.assertEqual(repos, self.apache2_repos)
 
 
 if __name__ == "__main__":
