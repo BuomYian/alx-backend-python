@@ -225,52 +225,61 @@ apache2_repos = TEST_PAYLOAD[0][3]
 @parameterized_class(
     ("org_payload", "repos_payload", "expected_repos", "apache2_repos"),
     [
-        (org_payload, repos_payload,
-         expected_repos, apache2_repos)
-    ]
+        (org_payload, repos_payload, expected_repos, apache2_repos),
+    ],
 )
 class TestIntegrationGithubOrgClient(unittest.TestCase):
-    """Integration test class for GithubOrgClient."""
+    """Integration test cases for GithubOrgClient using fixtures"""
+
     @classmethod
     def setUpClass(cls):
-        """Set up the test fixtures and mock requests.get.
+        """Set up the test fixtures and mock requests.get
 
-        This method patches requests.get to return mock 
-        responses based on the URL being requested, avoiding
-        actual HTTP calls during tests.
+        This method patches requests.get to return mock responses
+        based on the URL being requested, avoiding actual HTTP calls.
         """
         cls.get_patcher = patch("requests.get")
         mock_requests_get = cls.get_patcher.start()
 
         def side_effect_func(url, *args, **kwargs):
-            """Return appropriate mock response based on URL."""
-            mock_reponse = MagicMock()
+            """Return appropriate mock response based on URL"""
+            mock_response = MagicMock()
 
+            # Return org payload for org URL
             if url == "https://api.github.com/orgs/google":
-                mock_reponse.json.return_value = cls.org_payload
+                mock_response.json.return_value = cls.org_payload
+            # Return repos payload for repos URL
             elif url == cls.org_payload.get("repos_url"):
-                mock_reponse.json.return_value = cls.repos_payload
+                mock_response.json.return_value = cls.repos_payload
 
-            return mock_reponse
+            return mock_response
 
         mock_requests_get.side_effect = side_effect_func
 
     @classmethod
     def tearDownClass(cls):
-        """Stop the requests.get patcher after test are complete.
+        """Stop the patcher after tests are complete
 
-        This method stops the patch and cleans up the mock
+        This method stops the patch and cleans up the mock.
         """
         cls.get_patcher.stop()
 
     def test_public_repos(self):
-        """Test that public_repos returns the expected list of repo names."""
+        """Integration test for GithubOrgClient.public_repos
+
+        Verifies that public_repos returns the expected list of repositories
+        when using real client methods (only mocking external HTTP calls).
+        """
         client = GithubOrgClient("google")
         repos = client.public_repos()
         self.assertEqual(repos, self.expected_repos)
 
     def test_public_repos_with_license(self):
-        """Test that public_repos with license filter returns expected repos."""
+        """Integration test for GithubOrgClient.public_repos with license filter
+
+        Verifies that public_repos with Apache 2.0 license filter
+        returns only repos with Apache 2.0 license.
+        """
         client = GithubOrgClient("google")
         repos = client.public_repos(license="apache-2.0")
         self.assertEqual(repos, self.apache2_repos)
