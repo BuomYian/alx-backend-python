@@ -3,8 +3,15 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
-from .models import Conversation, Message
-from .serializers import ConversationSerializer, ConversationDetailSerializer, MessageSerializer
+from .models import Conversation, Message, User
+from .serializers import ConversationSerializer, ConversationDetailSerializer, MessageSerializer, UserSerializer
+
+
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
+    """ViewSet for listing users."""
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
 
 
 class ConversationViewSet(viewsets.ModelViewSet):
@@ -24,9 +31,17 @@ class ConversationViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         """Create a new conversation with participants."""
+        participant_ids = request.data.get('participant_ids', [])
+        if not participant_ids:
+            return Response(
+                {'error': 'At least one participant is required'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         conversation = serializer.save()
+        # Always add the current user as a participant
         conversation.participants.add(request.user)
         return Response(ConversationSerializer(conversation).data, status=status.HTTP_201_CREATED)
 
@@ -34,6 +49,20 @@ class ConversationViewSet(viewsets.ModelViewSet):
     def send_message(self, request, pk=None):
         """Send a message to a conversation."""
         conversation = self.get_object()
+
+        # Verify user is a participant in the conversation
+        if request.user not in conversation.participants.all():
+            return Response(
+                {'error': 'You are not a participant in this conversation'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        if not request.data.get('message_body', '').strip():
+            return Response(
+                {'error': 'Message body cannot be empty'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         serializer = MessageSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(conversation=conversation, sender=request.user)
@@ -44,6 +73,47 @@ class ConversationViewSet(viewsets.ModelViewSet):
     def messages(self, request, pk=None):
         """Get all messages in a conversation."""
         conversation = self.get_object()
-        messages = conversation.messages.all()
+        messages = conversation.messages.all().order_by('sent_at')
         serializer = MessageSerializer(messages, many=True)
+        return Response(serializer.data)
+
+
+class MessageViewSet(viewsets.ModelViewSet):
+    """ViewSet for managing Message objects."""
+    serializer_class = MessageSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        """Return messages from conversations the user participates in."""
+        return Message.objects.filter(conversation__participants=self.request.user)
+
+    def create(self, request, *args, **kwargs):
+        """Create a new message (should use conversation.send_message instead)."""
+        return Response(
+            {'error': 'Use the conversation\'s send_message endpoint to create messages'},
+            status=status.HTTP_405_METHOD_NOT_ALLOWED
+        )
+
+    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
+    def by_conversation(self, request):
+        """Get messages filtered by conversation_id."""
+        conversation_id = request.query_params.get('conversation_id')
+        if not conversation_id:
+            return Response(
+                {'error': 'conversation_id query parameter is required'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        messages = self.get_queryset().filter(
+            conversation__conversation_id=conversation_id)
+        serializer = self.get_serializer(messages, many=True)
+        return Response(serializer.data)
+
+    @action(detail=True, methods=['patch'], permission_classes=[IsAuthenticated])
+    def mark_as_read(self, request, pk=None):
+        """Mark a message as read."""
+        message = self.get_object()
+        message.is_read = True
+        message.save()
+        serializer = self.get_serializer(message)
         return Response(serializer.data)
