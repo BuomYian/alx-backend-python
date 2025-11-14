@@ -1,43 +1,41 @@
 from rest_framework import serializers
-from django.contrib.auth.models import User
-from .models import Chat, Message
+from chats.models import User, Conversation, Message
 
 
 class UserSerializer(serializers.ModelSerializer):
     """Serializer for User model."""
     class Meta:
         model = User
-        fields = ['id', 'username', 'first_name', 'last_name', 'email']
-        read_only_fields = ['id']
+        fields = ['id', 'email', 'first_name', 'last_name',
+                  'role', 'phone_number', 'created_at']
+        read_only_fields = ['id', 'created_at']
 
 
 class MessageSerializer(serializers.ModelSerializer):
-    """Serializers for Message model."""
+    """Serializer for Message model."""
     sender = UserSerializer(read_only=True)
-    sender_id = serializers.IntegerField(write_only=True)
+    sender_id = serializers.UUIDField(write_only=True)
 
     class Meta:
         model = Message
-        fields = [
-            'id', 'chat', 'sender', 'sender_id', 'content', 'is_read', 'created_at', 'updated_at'
-        ]
-        read_only_fields = ['id', 'created_at', 'updated_at']
+        fields = ['id', 'conversation', 'sender',
+                  'sender_id', 'message_body', 'sent_at']
+        read_only_fields = ['id', 'sent_at']
 
 
-class ChatDetailSerializer(serializers.ModelSerializer):
-    """Detailed serializer for Chat Model with nested messages."""
-    partiicipants = UserSerializer(many=True, read_only=True)
+class ConversationDetailSerializer(serializers.ModelSerializer):
+    """Detailed serializer for Conversation model with nested messages."""
+    participants = UserSerializer(many=True, read_only=True)
     messages = MessageSerializer(many=True, read_only=True)
 
     class Meta:
-        model = Chat
-        fields = ['id', 'name', 'partiicipants',
-                  'messages', 'created_at', 'updated_at']
+        model = Conversation
+        fields = ['id', 'participants', 'messages', 'created_at', 'updated_at']
         read_only_fields = ['id', 'created_at', 'updated_at']
 
 
-class ChatSerializer(serializers.ModelSerializer):
-    """Serializer for Chat model."""
+class ConversationSerializer(serializers.ModelSerializer):
+    """Serializer for Conversation model."""
     participants = UserSerializer(many=True, read_only=True)
     participant_ids = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(),
@@ -47,7 +45,7 @@ class ChatSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = Chat
-        fields = ['id', 'name', 'participants',
+        model = Conversation
+        fields = ['id', 'participants',
                   'participant_ids', 'created_at', 'updated_at']
         read_only_fields = ['id', 'created_at', 'updated_at']
