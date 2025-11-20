@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from .models import Conversation, Message, User
 from .serializers import ConversationSerializer, ConversationDetailSerializer, MessageSerializer, UserSerializer
-from .permissions import IsConversationParticipant, IsMessageSenderOrReadOnly, IsAuthenticatedUser
+from .permissions import IsConversationParticipant, IsMessageSenderOrReadOnly, IsAuthenticatedUser, IsParticipantOfConversation
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
@@ -20,7 +20,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 class ConversationViewSet(viewsets.ModelViewSet):
     """ViewSet for managing Conversation objects."""
     serializer_class = ConversationSerializer
-    permission_classes = [IsAuthenticatedUser, IsConversationParticipant]
+    permission_classes = [IsAuthenticatedUser, IsParticipantOfConversation]
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ['created_at', 'updated_at']
     ordering = ['-updated_at']
@@ -51,7 +51,7 @@ class ConversationViewSet(viewsets.ModelViewSet):
         conversation.participants.add(request.user)
         return Response(ConversationSerializer(conversation).data, status=status.HTTP_201_CREATED)
 
-    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticatedUser, IsConversationParticipant])
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticatedUser, IsParticipantOfConversation])
     def send_message(self, request, pk=None):
         """Send a message to a conversation."""
         conversation = self.get_object()
@@ -75,7 +75,7 @@ class ConversationViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=True, methods=['get'], permission_classes=[IsAuthenticatedUser, IsConversationParticipant])
+    @action(detail=True, methods=['get'], permission_classes=[IsAuthenticatedUser, IsParticipantOfConversation])
     def messages(self, request, pk=None):
         """Get all messages in a conversation."""
         conversation = self.get_object()
@@ -87,7 +87,8 @@ class ConversationViewSet(viewsets.ModelViewSet):
 class MessageViewSet(viewsets.ModelViewSet):
     """ViewSet for managing Message objects."""
     serializer_class = MessageSerializer
-    permission_classes = [IsAuthenticatedUser, IsMessageSenderOrReadOnly]
+    permission_classes = [IsAuthenticatedUser,
+                          IsMessageSenderOrReadOnly, IsParticipantOfConversation]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['message_body']
     ordering_fields = ['sent_at']
