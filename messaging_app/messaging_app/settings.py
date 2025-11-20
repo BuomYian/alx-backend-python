@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',  # Added SimpleJWT for JWT authentication
     'corsheaders',  # Added CORS support for API
     'chats',  # Added chats app
+    'django_filters',  # Added for filtering support
 ]
 
 MIDDLEWARE = [
@@ -131,8 +132,10 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
+        'chats.permissions.IsAuthenticatedUser',
     ],
     'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
         'rest_framework.filters.SearchFilter',
         'rest_framework.filters.OrderingFilter',
     ],

@@ -6,6 +6,10 @@ from django.shortcuts import get_object_or_404
 from .models import Conversation, Message, User
 from .serializers import ConversationSerializer, ConversationDetailSerializer, MessageSerializer, UserSerializer
 from .permissions import IsConversationParticipant, IsMessageSenderOrReadOnly, IsAuthenticatedUser, IsParticipantOfConversation
+from rest_framework.pagination import PageNumberPagination
+from django_filters.rest_framework import DjangoFilterBackend
+from .pagination import MessagePagination
+from .filters import MessageFilter
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
@@ -89,7 +93,10 @@ class MessageViewSet(viewsets.ModelViewSet):
     serializer_class = MessageSerializer
     permission_classes = [IsAuthenticatedUser,
                           IsMessageSenderOrReadOnly, IsParticipantOfConversation]
-    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    filter_backends = [DjangoFilterBackend,
+                       filters.SearchFilter, filters.OrderingFilter]
+    filterset_class = MessageFilter
+    pagination_class = MessagePagination
     search_fields = ['message_body']
     ordering_fields = ['sent_at']
     ordering = ['-sent_at']
