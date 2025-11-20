@@ -1,0 +1,105 @@
+2025-11-20 16:04:05,578 - INFO - HTTP/2 support not enabled (install the http2 and tls Twisted extras)
+2025-11-20 16:04:05,580 - INFO - Configuring endpoint tcp:port=8000:interface=127.0.0.1
+2025-11-20 16:04:05,583 - INFO - Listening on TCP address 127.0.0.1:8000
+2025-11-20 16:04:12,726 - ERROR - Internal Server Error: /
+Traceback (most recent call last):
+  File "C:\Users\Yian Jr\Desktop\alx-backend-python\messaging_app\venv\Lib\site-packages\django\contrib\sessions\backends\base.py", line 244, in _get_session
+    return self._session_cache
+           ^^^^^^^^^^^^^^^^^^^
+AttributeError: 'SessionStore' object has no attribute '_session_cache'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Yian Jr\Desktop\alx-backend-python\messaging_app\venv\Lib\site-packages\asgiref\sync.py", line 552, in thread_handler
+    raise exc_info[1]
+  File "C:\Users\Yian Jr\Desktop\alx-backend-python\messaging_app\venv\Lib\site-packages\django\core\handlers\exception.py", line 42, in inner
+    response = await get_response(request)
+                     ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Yian Jr\Desktop\alx-backend-python\Django-Middleware-0x03\chats\middleware.py", line 53, in __call__
+    username = request.user.username if request.user.is_authenticated else 'Anonymous'
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Yian Jr\Desktop\alx-backend-python\messaging_app\venv\Lib\site-packages\django\utils\functional.py", line 251, in inner
+    self._setup()
+  File "C:\Users\Yian Jr\Desktop\alx-backend-python\messaging_app\venv\Lib\site-packages\django\utils\functional.py", line 404, in _setup
+    self._wrapped = self._setupfunc()
+                    ^^^^^^^^^^^^^^^^^
+  File "C:\Users\Yian Jr\Desktop\alx-backend-python\messaging_app\venv\Lib\site-packages\django\contrib\auth\middleware.py", line 40, in <lambda>
+    request.user = SimpleLazyObject(lambda: get_user(request))
+                                            ^^^^^^^^^^^^^^^^^
+  File "C:\Users\Yian Jr\Desktop\alx-backend-python\messaging_app\venv\Lib\site-packages\django\contrib\auth\middleware.py", line 20, in get_user
+    request._cached_user = auth.get_user(request)
+                           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Yian Jr\Desktop\alx-backend-python\messaging_app\venv\Lib\site-packages\django\contrib\auth\__init__.py", line 304, in get_user
+    user_id = _get_user_session_key(request)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Yian Jr\Desktop\alx-backend-python\messaging_app\venv\Lib\site-packages\django\contrib\auth\__init__.py", line 95, in _get_user_session_key
+    return get_user_model()._meta.pk.to_python(request.session[SESSION_KEY])
+                                               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Yian Jr\Desktop\alx-backend-python\messaging_app\venv\Lib\site-packages\django\contrib\sessions\backends\base.py", line 55, in __getitem__
+    return self._session[key]
+           ^^^^^^^^^^^^^
+  File "C:\Users\Yian Jr\Desktop\alx-backend-python\messaging_app\venv\Lib\site-packages\django\contrib\sessions\backends\base.py", line 249, in _get_session
+    self._session_cache = self.load()
+                          ^^^^^^^^^^^
+  File "C:\Users\Yian Jr\Desktop\alx-backend-python\messaging_app\venv\Lib\site-packages\django\contrib\sessions\backends\db.py", line 55, in load
+    s = self._get_session_from_db()
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Yian Jr\Desktop\alx-backend-python\messaging_app\venv\Lib\site-packages\django\contrib\sessions\backends\db.py", line 34, in _get_session_from_db
+    return self.model.objects.get(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Yian Jr\Desktop\alx-backend-python\messaging_app\venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Yian Jr\Desktop\alx-backend-python\messaging_app\venv\Lib\site-packages\django\db\models\query.py", line 631, in get
+    num = len(clone)
+          ^^^^^^^^^^
+  File "C:\Users\Yian Jr\Desktop\alx-backend-python\messaging_app\venv\Lib\site-packages\django\db\models\query.py", line 368, in __len__
+    self._fetch_all()
+  File "C:\Users\Yian Jr\Desktop\alx-backend-python\messaging_app\venv\Lib\site-packages\django\db\models\query.py", line 1954, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Yian Jr\Desktop\alx-backend-python\messaging_app\venv\Lib\site-packages\django\db\models\query.py", line 93, in __iter__
+    results = compiler.execute_sql(
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Yian Jr\Desktop\alx-backend-python\messaging_app\venv\Lib\site-packages\django\db\models\sql\compiler.py", line 1621, in execute_sql
+    cursor = self.connection.cursor()
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Yian Jr\Desktop\alx-backend-python\messaging_app\venv\Lib\site-packages\django\utils\asyncio.py", line 24, in inner
+    raise SynchronousOnlyOperation(message)
+django.core.exceptions.SynchronousOnlyOperation: You cannot call this from an async context - use a thread or sync_to_async.
+2025-11-20 16:04:12,797 - ERROR - [35;1mHTTP GET / 500 [0.72, 127.0.0.1:64240][0m
+2025-11-20 16:08:41,043 - INFO - C:\Users\Yian Jr\Desktop\alx-backend-python\Django-Middleware-0x03\chats\middleware.py changed, reloading.
+2025-11-20 16:08:46,607 - INFO - HTTP/2 support not enabled (install the http2 and tls Twisted extras)
+2025-11-20 16:08:46,627 - INFO - Configuring endpoint tcp:port=8000:interface=127.0.0.1
+2025-11-20 16:08:46,640 - INFO - Listening on TCP address 127.0.0.1:8000
+INFO 2025-11-20 16:09:21,662 middleware 19956 20560 Request received - User: admin, Path: /
+2025-11-20 16:09:21,662 - INFO - Request received - User: admin, Path: /
+2025-11-20 16:09:21,745 - WARNING - Not Found: /
+2025-11-20 16:09:21,747 - WARNING - [33mHTTP GET / 404 [0.11, 127.0.0.1:54873][0m
+INFO 2025-11-20 16:09:29,336 middleware 19956 20560 Request received - User: admin, Path: /api/
+2025-11-20 16:09:29,336 - INFO - Request received - User: admin, Path: /api/
+2025-11-20 16:09:29,508 - INFO - [mHTTP GET /api/ 200 [0.19, 127.0.0.1:54873][0m
+2025-11-20 16:09:29,735 - INFO - [36mHTTP GET /static/rest_framework/css/bootstrap.min.css 304 [0.10, 127.0.0.1:54873][0m
+2025-11-20 16:09:29,737 - INFO - [36mHTTP GET /static/rest_framework/css/bootstrap-tweaks.css 304 [0.10, 127.0.0.1:54689][0m
+2025-11-20 16:09:29,741 - INFO - [36mHTTP GET /static/rest_framework/css/prettify.css 304 [0.08, 127.0.0.1:55638][0m
+2025-11-20 16:09:29,745 - INFO - [36mHTTP GET /static/rest_framework/css/default.css 304 [0.08, 127.0.0.1:56873][0m
+2025-11-20 16:09:29,756 - INFO - [36mHTTP GET /static/rest_framework/js/jquery-3.7.1.min.js 304 [0.09, 127.0.0.1:57206][0m
+2025-11-20 16:09:29,762 - INFO - [36mHTTP GET /static/rest_framework/js/ajax-form.js 304 [0.06, 127.0.0.1:62845][0m
+2025-11-20 16:09:29,846 - INFO - [36mHTTP GET /static/rest_framework/js/csrf.js 304 [0.09, 127.0.0.1:54689][0m
+2025-11-20 16:09:29,857 - INFO - [36mHTTP GET /static/rest_framework/js/bootstrap.min.js 304 [0.10, 127.0.0.1:54873][0m
+2025-11-20 16:09:29,861 - INFO - [36mHTTP GET /static/rest_framework/js/default.js 304 [0.07, 127.0.0.1:55638][0m
+2025-11-20 16:09:29,870 - INFO - [36mHTTP GET /static/rest_framework/js/prettify-min.js 304 [0.08, 127.0.0.1:56873][0m
+2025-11-20 16:09:29,877 - INFO - [36mHTTP GET /static/rest_framework/img/grid.png 304 [0.06, 127.0.0.1:62845][0m
+2025-11-20 16:09:29,892 - INFO - [36mHTTP GET /static/rest_framework/js/load-ajax-form.js 304 [0.07, 127.0.0.1:57206][0m
+INFO 2025-11-20 16:09:32,042 middleware 19956 20560 Request received - User: admin, Path: /api/messages/
+2025-11-20 16:09:32,042 - INFO - Request received - User: admin, Path: /api/messages/
+2025-11-20 16:09:32,477 - INFO - [mHTTP GET /api/messages/ 200 [0.45, 127.0.0.1:62845][0m
+2025-11-20 16:09:32,632 - INFO - [36mHTTP GET /static/rest_framework/fonts/glyphicons-halflings-regular.woff2 304 [0.02, 127.0.0.1:62845][0m
+INFO 2025-11-20 16:09:35,883 middleware 19956 20560 Request received - User: admin, Path: /api/conversations/
+2025-11-20 16:09:35,883 - INFO - Request received - User: admin, Path: /api/conversations/
+2025-11-20 16:09:35,926 - INFO - [mHTTP GET /api/conversations/ 200 [0.05, 127.0.0.1:62845][0m
+INFO 2025-11-20 16:09:39,713 middleware 19956 20560 Request received - User: admin, Path: /api/users/
+2025-11-20 16:09:39,713 - INFO - Request received - User: admin, Path: /api/users/
+2025-11-20 16:09:39,958 - INFO - [mHTTP GET /api/users/ 200 [0.26, 127.0.0.1:62845][0m
+2025-11-20 16:19:59,307 - INFO - C:\Users\Yian Jr\Desktop\alx-backend-python\Django-Middleware-0x03\chats\middleware.py changed, reloading.
