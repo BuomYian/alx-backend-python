@@ -2,10 +2,10 @@
 Custom permission classes for the messaging API.
 Ensure users can only access their own conversations and messages.
 """
-from rest_framework.permissions import BasePermission, IsAuthenticated
+from rest_framework import permissions
 
 
-class IsOwnerOrReadOnly(BasePermission):
+class IsOwnerOrReadOnly(permissions.BasePermission):
     """
     Custom permission to only allow owners of an object to edit it.
     Assumes the model instance has an `owner` attribute.
@@ -19,7 +19,7 @@ class IsOwnerOrReadOnly(BasePermission):
         return obj.sender == request.user or obj.user == request.user
 
 
-class IsConversationParticipant(BasePermission):
+class IsConversationParticipant(permissions.BasePermission):
     """
     Custom permission to only allow participants of a conversation to access it.
     """
@@ -29,7 +29,7 @@ class IsConversationParticipant(BasePermission):
         return request.user in obj.participants.all()
 
 
-class IsMessageSenderOrReadOnly(BasePermission):
+class IsMessageSenderOrReadOnly(permissions.BasePermission):
     """
     Custom permission to only allow the sender of a message to edit it.
     """
@@ -42,7 +42,7 @@ class IsMessageSenderOrReadOnly(BasePermission):
         return obj.sender == request.user
 
 
-class IsAuthenticatedUser(IsAuthenticated):
+class IsAuthenticatedUser(permissions.IsAuthenticated):
     """
     Ensure the user is authenticated.
     This class is a simple extension of DRF's IsAuthenticated for clarity.
