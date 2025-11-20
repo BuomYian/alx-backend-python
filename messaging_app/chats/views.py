@@ -5,13 +5,14 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from .models import Conversation, Message, User
 from .serializers import ConversationSerializer, ConversationDetailSerializer, MessageSerializer, UserSerializer
+from .permissions import IsConversationParticipant, IsMessageSenderOrReadOnly, IsAuthenticatedUser
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     """ViewSet for listing users."""
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedUser]
     filter_backends = [filters.SearchFilter]
     search_fields = ['username', 'email']
 
@@ -19,8 +20,9 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 class ConversationViewSet(viewsets.ModelViewSet):
     """ViewSet for managing Conversation objects."""
     serializer_class = ConversationSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedUser, IsConversationParticipant]
     filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['created_at', 'updated_at']
     ordering = ['-updated_at']
 
     def get_queryset(self):
@@ -49,7 +51,7 @@ class ConversationViewSet(viewsets.ModelViewSet):
         conversation.participants.add(request.user)
         return Response(ConversationSerializer(conversation).data, status=status.HTTP_201_CREATED)
 
-    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticatedUser, IsConversationParticipant])
     def send_message(self, request, pk=None):
         """Send a message to a conversation."""
         conversation = self.get_object()
@@ -73,7 +75,7 @@ class ConversationViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=True, methods=['get'], permission_classes=[IsAuthenticated])
+    @action(detail=True, methods=['get'], permission_classes=[IsAuthenticatedUser, IsConversationParticipant])
     def messages(self, request, pk=None):
         """Get all messages in a conversation."""
         conversation = self.get_object()
@@ -85,10 +87,10 @@ class ConversationViewSet(viewsets.ModelViewSet):
 class MessageViewSet(viewsets.ModelViewSet):
     """ViewSet for managing Message objects."""
     serializer_class = MessageSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedUser, IsMessageSenderOrReadOnly]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['message_body']
-    ordering_fields = ['-sent_at']
+    ordering_fields = ['sent_at']
     ordering = ['-sent_at']
 
     def get_queryset(self):
@@ -102,7 +104,7 @@ class MessageViewSet(viewsets.ModelViewSet):
             status=status.HTTP_405_METHOD_NOT_ALLOWED
         )
 
-    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
+    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticatedUser])
     def by_conversation(self, request):
         """Get messages filtered by conversation_id."""
         conversation_id = request.query_params.get('conversation_id')
@@ -117,7 +119,7 @@ class MessageViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(messages, many=True)
         return Response(serializer.data)
 
-    @action(detail=True, methods=['patch'], permission_classes=[IsAuthenticated])
+    @action(detail=True, methods=['patch'], permission_classes=[IsAuthenticatedUser])
     def mark_as_read(self, request, pk=None):
         """Mark a message as read."""
         message = self.get_object()
