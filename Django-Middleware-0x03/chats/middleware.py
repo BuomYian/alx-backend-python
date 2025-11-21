@@ -134,7 +134,7 @@ class OffensiveLanguageMiddleware(MiddlewareMixin):
         return ip
 
 
-class RolePermissionMiddleware(MiddlewareMixin):
+class RolepermissionMiddleware(MiddlewareMixin):
     """Middleware to enforce role-based permissions (admin/moderator only for certain endpoints)"""
 
     def __init__(self, get_response):

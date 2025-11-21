@@ -103,3 +103,86 @@ INFO 2025-11-20 16:09:39,713 middleware 19956 20560 Request received - User: adm
 2025-11-20 16:09:39,713 - INFO - Request received - User: admin, Path: /api/users/
 2025-11-20 16:09:39,958 - INFO - [mHTTP GET /api/users/ 200 [0.26, 127.0.0.1:62845][0m
 2025-11-20 16:19:59,307 - INFO - C:\Users\Yian Jr\Desktop\alx-backend-python\Django-Middleware-0x03\chats\middleware.py changed, reloading.
+2025-11-20 16:20:03,253 - INFO - HTTP/2 support not enabled (install the http2 and tls Twisted extras)
+2025-11-20 16:20:03,258 - INFO - Configuring endpoint tcp:port=8000:interface=127.0.0.1
+2025-11-20 16:20:03,259 - INFO - Listening on TCP address 127.0.0.1:8000
+2025-11-21 12:51:03,116 - INFO - HTTP/2 support not enabled (install the http2 and tls Twisted extras)
+2025-11-21 12:51:03,117 - INFO - Configuring endpoint tcp:port=8000:interface=127.0.0.1
+2025-11-21 12:51:03,122 - INFO - Listening on TCP address 127.0.0.1:8000
+INFO 2025-11-21 12:51:09,485 middleware 8720 21244 Request received - User: admin, Path: /
+2025-11-21 12:51:09,485 - INFO - Request received - User: admin, Path: /
+2025-11-21 12:51:09,558 - WARNING - Not Found: /
+2025-11-21 12:51:09,562 - WARNING - [33mHTTP GET / 404 [0.11, 127.0.0.1:56962][0m
+INFO 2025-11-21 12:51:10,342 middleware 8720 21244 Request received - User: admin, Path: /favicon.ico
+2025-11-21 12:51:10,342 - INFO - Request received - User: admin, Path: /favicon.ico
+2025-11-21 12:51:10,373 - WARNING - Not Found: /favicon.ico
+2025-11-21 12:51:10,452 - WARNING - [33mHTTP GET /favicon.ico 404 [0.15, 127.0.0.1:56962][0m
+INFO 2025-11-21 12:51:19,865 middleware 8720 21244 Request received - User: admin, Path: /api/chats/
+2025-11-21 12:51:19,865 - INFO - Request received - User: admin, Path: /api/chats/
+2025-11-21 12:51:19,881 - WARNING - Not Found: /api/chats/
+2025-11-21 12:51:19,882 - WARNING - [33mHTTP GET /api/chats/ 404 [0.03, 127.0.0.1:56962][0m
+INFO 2025-11-21 12:51:56,758 middleware 8720 21244 Request received - User: admin, Path: /api/conversations/
+2025-11-21 12:51:56,758 - INFO - Request received - User: admin, Path: /api/conversations/
+2025-11-21 12:51:57,054 - INFO - [mHTTP GET /api/conversations/ 200 [0.31, 127.0.0.1:56962][0m
+2025-11-21 12:51:57,192 - INFO - [36mHTTP GET /static/rest_framework/css/bootstrap.min.css 304 [0.09, 127.0.0.1:56962][0m
+2025-11-21 12:51:57,194 - INFO - [36mHTTP GET /static/rest_framework/css/bootstrap-tweaks.css 304 [0.06, 127.0.0.1:60620][0m
+2025-11-21 12:51:57,199 - INFO - [36mHTTP GET /static/rest_framework/css/default.css 304 [0.06, 127.0.0.1:54281][0m
+2025-11-21 12:51:57,204 - INFO - [36mHTTP GET /static/rest_framework/css/prettify.css 304 [0.05, 127.0.0.1:61448][0m
+2025-11-21 12:51:57,223 - INFO - [36mHTTP GET /static/rest_framework/js/ajax-form.js 304 [0.05, 127.0.0.1:59799][0m
+2025-11-21 12:51:57,240 - INFO - [36mHTTP GET /static/rest_framework/js/jquery-3.7.1.min.js 304 [0.07, 127.0.0.1:55218][0m
+2025-11-21 12:51:57,317 - INFO - [36mHTTP GET /static/rest_framework/js/default.js 304 [0.10, 127.0.0.1:56962][0m
+2025-11-21 12:51:57,319 - INFO - [36mHTTP GET /static/rest_framework/js/csrf.js 304 [0.10, 127.0.0.1:60620][0m
+2025-11-21 12:51:57,322 - INFO - [36mHTTP GET /static/rest_framework/js/load-ajax-form.js 304 [0.02, 127.0.0.1:54281][0m
+2025-11-21 12:51:57,325 - INFO - [36mHTTP GET /static/rest_framework/js/bootstrap.min.js 304 [0.02, 127.0.0.1:61448][0m
+2025-11-21 12:51:57,366 - INFO - [36mHTTP GET /static/rest_framework/js/prettify-min.js 304 [0.05, 127.0.0.1:59799][0m
+2025-11-21 12:51:57,375 - INFO - [36mHTTP GET /static/rest_framework/img/grid.png 304 [0.02, 127.0.0.1:56962][0m
+2025-11-21 12:51:57,389 - INFO - [36mHTTP GET /static/rest_framework/fonts/glyphicons-halflings-regular.woff2 304 [0.02, 127.0.0.1:61448][0m
+INFO 2025-11-21 12:52:08,284 middleware 8720 21244 Request received - User: admin, Path: /api/
+2025-11-21 12:52:08,284 - INFO - Request received - User: admin, Path: /api/
+2025-11-21 12:52:08,299 - INFO - [mHTTP GET /api/ 200 [0.03, 127.0.0.1:61448][0m
+INFO 2025-11-21 12:52:12,696 middleware 8720 21244 Request received - User: admin, Path: /api/messages/
+2025-11-21 12:52:12,696 - INFO - Request received - User: admin, Path: /api/messages/
+2025-11-21 12:52:12,982 - INFO - [mHTTP GET /api/messages/ 200 [0.30, 127.0.0.1:61448][0m
+INFO 2025-11-21 12:53:07,010 middleware 8720 21244 Request received - User: admin, Path: /api/messages/
+2025-11-21 12:53:07,010 - INFO - Request received - User: admin, Path: /api/messages/
+2025-11-21 12:53:07,081 - INFO - [mHTTP GET /api/messages/ 200 [0.08, 127.0.0.1:61448][0m
+INFO 2025-11-21 12:53:08,766 middleware 8720 21244 Request received - User: admin, Path: /api/
+2025-11-21 12:53:08,766 - INFO - Request received - User: admin, Path: /api/
+2025-11-21 12:53:08,775 - INFO - [mHTTP GET /api/ 200 [0.02, 127.0.0.1:61448][0m
+INFO 2025-11-21 12:53:11,287 middleware 8720 21244 Request received - User: admin, Path: /api/messages/
+2025-11-21 12:53:11,287 - INFO - Request received - User: admin, Path: /api/messages/
+2025-11-21 12:53:11,316 - INFO - [mHTTP GET /api/messages/ 200 [0.04, 127.0.0.1:61448][0m
+INFO 2025-11-21 12:59:34,446 middleware 8720 21244 Request received - User: admin, Path: /api/
+2025-11-21 12:59:34,446 - INFO - Request received - User: admin, Path: /api/
+2025-11-21 12:59:34,458 - INFO - [mHTTP GET /api/ 200 [0.02, 127.0.0.1:60104][0m
+INFO 2025-11-21 12:59:36,740 middleware 8720 21244 Request received - User: admin, Path: /api/conversations/
+2025-11-21 12:59:36,740 - INFO - Request received - User: admin, Path: /api/conversations/
+2025-11-21 12:59:36,761 - INFO - [mHTTP GET /api/conversations/ 200 [0.03, 127.0.0.1:60104][0m
+INFO 2025-11-21 12:59:43,582 middleware 8720 21244 Request received - User: admin, Path: /api/conversations/
+2025-11-21 12:59:43,582 - INFO - Request received - User: admin, Path: /api/conversations/
+2025-11-21 12:59:43,605 - WARNING - Bad Request: /api/conversations/
+2025-11-21 12:59:43,607 - WARNING - [31;1mHTTP POST /api/conversations/ 400 [0.04, 127.0.0.1:60104][0m
+INFO 2025-11-21 13:19:54,504 middleware 8720 21244 Request received - User: admin, Path: /api/conversations/
+2025-11-21 13:19:54,504 - INFO - Request received - User: admin, Path: /api/conversations/
+2025-11-21 13:19:54,525 - WARNING - Bad Request: /api/conversations/
+2025-11-21 13:19:54,528 - WARNING - [31;1mHTTP POST /api/conversations/ 400 [0.04, 127.0.0.1:60240][0m
+INFO 2025-11-21 13:21:11,011 middleware 8720 21244 Request received - User: admin, Path: /api/
+2025-11-21 13:21:11,011 - INFO - Request received - User: admin, Path: /api/
+2025-11-21 13:21:11,022 - INFO - [mHTTP GET /api/ 200 [0.02, 127.0.0.1:51350][0m
+INFO 2025-11-21 13:21:17,065 middleware 8720 21244 Request received - User: admin, Path: /api/
+2025-11-21 13:21:17,065 - INFO - Request received - User: admin, Path: /api/
+2025-11-21 13:21:17,075 - INFO - [mHTTP GET /api/?format=api 200 [0.02, 127.0.0.1:51350][0m
+2025-11-21 13:24:30,518 - INFO - C:\Users\Yian Jr\Desktop\alx-backend-python\Django-Middleware-0x03\chats\middleware.py changed, reloading.
+2025-11-21 13:24:34,819 - INFO - HTTP/2 support not enabled (install the http2 and tls Twisted extras)
+2025-11-21 13:24:34,825 - INFO - Configuring endpoint tcp:port=8000:interface=127.0.0.1
+2025-11-21 13:24:34,827 - INFO - Listening on TCP address 127.0.0.1:8000
+2025-11-21 13:24:46,973 - INFO - C:\Users\Yian Jr\Desktop\alx-backend-python\Django-Middleware-0x03\messaging_app\settings.py changed, reloading.
+2025-11-21 13:24:51,255 - INFO - HTTP/2 support not enabled (install the http2 and tls Twisted extras)
+2025-11-21 13:24:51,257 - INFO - Configuring endpoint tcp:port=8000:interface=127.0.0.1
+2025-11-21 13:24:51,259 - INFO - Listening on TCP address 127.0.0.1:8000
+2025-11-21 13:25:39,741 - INFO - C:\Users\Yian Jr\Desktop\alx-backend-python\Django-Middleware-0x03\chats\middleware.py changed, reloading.
+2025-11-21 13:25:43,755 - INFO - HTTP/2 support not enabled (install the http2 and tls Twisted extras)
+2025-11-21 13:25:43,756 - INFO - Configuring endpoint tcp:port=8000:interface=127.0.0.1
+2025-11-21 13:25:43,758 - INFO - Listening on TCP address 127.0.0.1:8000
+2025-11-21 13:25:47,225 - INFO - C:\Users\Yian Jr\Desktop\alx-backend-python\Django-Middleware-0x03\chats\middleware.py changed, reloading.
+2025-11-21 13:25:55,663 - INFO - C:\Users\Yian Jr\Desktop\alx-backend-python\Django-Middleware-0x03\messaging_app\settings.py changed, reloading.
