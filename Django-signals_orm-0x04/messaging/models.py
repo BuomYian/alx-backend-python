@@ -4,45 +4,7 @@ Demonstrates efficient database design for event handling.
 """
 from django.db import models
 from django.contrib.auth.models import User
-
-
-class UnreadMessagesManager(models.Manager):
-    """
-    Custom manager to filter unread messages for a specific user.
-    Optimizes queries by using only() to retrieve only necessary fields.
-    """
-
-    def unread_for_user(self, user):
-        """
-        Returns all unread messages received by a user.
-        Uses only() to optimize database queries by fetching only necessary fields.
-
-        Args:
-            user: The User instance to fetch unread messages for
-
-        Returns:
-            QuerySet of unread messages optimized for minimal data retrieval
-        """
-        return self.filter(
-            receiver=user,
-            is_read=False
-        ).select_related('sender').only(
-            'id',
-            'sender__id',
-            'sender__username',
-            'sender__email',
-            'subject',
-            'content',
-            'timestamp',
-            'is_read',
-        ).order_by('-timestamp')
-
-    def unread_count_for_user(self, user):
-        """
-        Returns the count of unread messages for a user.
-        Optimized query that only counts without fetching full objects.
-        """
-        return self.filter(receiver=user, is_read=False).count()
+from .managers import UnreadMessagesManager
 
 
 class EventLog(models.Model):
@@ -110,19 +72,18 @@ class Message(models.Model):
     )
     subject = models.CharField(max_length=200)
     content = models.TextField()
-    is_read = models.BooleanField(default=False, db_index=True)
+    read = models.BooleanField(default=False, db_index=True)
     edited = models.BooleanField(default=False, db_index=True)
     timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    objects = models.Manager()  # The default manager.
-    # Custom manager for unread messages.
-    unread_messages = UnreadMessagesManager()
+    objects = models.Manager()  # Default manager
+    unread = UnreadMessagesManager()  # Custom manager for unread messages
 
     class Meta:
         ordering = ['-timestamp']
         indexes = [
-            models.Index(fields=['receiver', 'is_read']),
+            models.Index(fields=['receiver', 'read']),
             models.Index(fields=['sender', '-timestamp']),
             models.Index(fields=['parent_message', '-timestamp']),
         ]
@@ -132,13 +93,15 @@ class Message(models.Model):
 
     def get_all_replies(self):
         """
-        Retrieve all replies to this message using prefetch_related for optimization.
+        Recursively fetch all replies to this message using ORM.
+        Efficiently retrieves the entire thread tree.
         """
         replies = []
         direct_replies = self.replies.all()
 
         for reply in direct_replies:
             replies.append(reply)
+            # Recursively get replies to replies
             replies.extend(reply.get_all_replies())
 
         return replies
@@ -173,7 +136,7 @@ class MessageHistory(models.Model):
         ]
 
     def __str__(self):
-        return f"Edit history for Message ID {self.message.id} at {self.edited_at}"
+        return f"Edit history for message {self.message.id} on {self.edited_at}"
 
 
 class Notification(models.Model):

@@ -104,7 +104,7 @@ def build_thread_structure(message, depth=0):
         'subject': message.subject,
         'content': message.content,
         'timestamp': message.timestamp.isoformat(),
-        'is_read': message.is_read,
+        'read': message.read,  # updated from is_read to read
         'edited': message.edited,
         'depth': depth,
         'replies': [
@@ -211,9 +211,8 @@ def unread_messages(request):
     Display unread messages for the authenticated user.
     Uses the custom UnreadMessagesManager with .only() optimization.
 
-    New view for displaying unread messages with optimized queries
+    Demonstrates efficient query optimization with custom managers.
     """
-    # Use custom manager to get unread messages with optimized fields
     unread_msgs = Message.unread.unread_for_user(request.user)
 
     # Get the count of unread messages
@@ -252,13 +251,13 @@ def mark_as_read(request, message_id):
     Mark a message as read by the current user.
     Only the receiver can mark a message as read.
 
-    New view for marking messages as read
+    Uses optimized update_fields to only update the read field.
     """
     if request.method == 'POST':
         try:
             message = Message.objects.get(id=message_id, receiver=request.user)
-            message.is_read = True
-            message.save(update_fields=['is_read'])
+            message.read = True
+            message.save(update_fields=['read'])
 
             # Invalidate the unread count cache
             cache_key = f'unread_count_{request.user.id}'
@@ -279,8 +278,6 @@ def inbox_dashboard(request):
     """
     Display inbox dashboard with unread count and recent messages.
     Demonstrates efficient use of custom managers and caching.
-
-    New view for inbox dashboard
     """
     # Get cached unread count or calculate it
     cache_key = f'unread_count_{request.user.id}'
@@ -301,7 +298,7 @@ def inbox_dashboard(request):
         'sender__username',
         'subject',
         'timestamp',
-        'is_read',
+        'read',
     ).order_by('-timestamp')[:10]
 
     return render(request, 'messaging/inbox_dashboard.html', {

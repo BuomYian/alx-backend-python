@@ -18,8 +18,8 @@ class EventLogAdmin(admin.ModelAdmin):
 @admin.register(Message)
 class MessageAdmin(admin.ModelAdmin):
     """Admin interface for Message model."""
-    list_display = ('sender', 'receiver', 'subject', 'is_read', 'timestamp')
-    list_filter = ('is_read', 'timestamp')
+    list_display = ('sender', 'receiver', 'subject', 'read', 'timestamp')
+    list_filter = ('read', 'timestamp')
     search_fields = ('subject', 'content', 'sender__username',
                      'receiver__username')
     readonly_fields = ('timestamp', 'updated_at')
