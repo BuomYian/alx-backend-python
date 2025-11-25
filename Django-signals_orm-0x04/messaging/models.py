@@ -78,6 +78,38 @@ class Message(models.Model):
         return f"Message from {self.sender} to {self.receiver}: {self.subject}"
 
 
+class MessagingHistory(models.Model):
+    """
+    Stores the history of message edits.
+    Each time a message is edited, the old content is saved here.
+    Demonstrates use of pre_save signal for audit logging.
+    """
+    message = models.ForeignKey(
+        Message,
+        on_delete=models.CASCADE,
+        related_name='history',
+    )
+    old_content = models.TextField()
+    old_subject = models.CharField(max_length=200, blank=True)
+    edited_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='message_edits',
+    )
+    edited_at = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    class Meta:
+        ordering = ['-edited_at']
+        indexes = [
+            models.Index(fields=['message', '-edited_at']),
+        ]
+
+    def __str__(self):
+        return f"Edit history for Message ID {self.message.id} at {self.edited_at}"
+
+
 class Notification(models.Model):
     """
     Stores notifications for users.

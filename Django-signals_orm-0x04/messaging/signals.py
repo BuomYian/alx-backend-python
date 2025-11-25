@@ -5,7 +5,7 @@ Demonstrates event-driven architecture and best practices.
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.contrib.auth.models import User
-from .models import EventLog, Message, Notification
+from .models import EventLog, Message, Notification, MessagingHistory
 
 
 @receiver(post_save, sender=User)
@@ -41,6 +41,43 @@ def log_user_deleted(sender, instance, **kwargs):
             'email': instance.email,
         }
     )
+
+
+@receiver(post_save, sender=Message)
+def log_message_sent(sender, instance, created, **kwargs):
+    """
+    Signal handler that logs message edits using pre_save.
+    Captures the old content before the message is updated in the database.
+    Demonstrates the importance of using pre_save for audit trails.
+    """
+    try:
+        old_instance = Message.objects.get(pk=instance.pk)
+
+        if old_instance.content != instance.content or old_instance.subject != instance.subject:
+            if old_instance.content != instance.content:
+                MessagingHistory.objects.create(
+                    message=instance,
+                    old_content=old_instance.content,
+                    old_subject=old_instance.subject,
+                    edited_by=instance.sender,
+                )
+
+                instance.edited = True
+
+                EventLog.objects.create(
+                    event_type='user_updated',
+                    related_user=instance.sender,
+                    description=f"Message '{instance.subject}' was edited by '{instance.sender.username}'",
+                    metadata={
+                        'message_id': instance.id,
+                        'old_subject': old_instance.subject,
+                        'new_subject': instance.subject,
+                    }
+                )
+
+    except Message.DoesNotExist:
+        # Message is new, no old instance to compare
+        pass
 
 
 @receiver(post_save, sender=Message)

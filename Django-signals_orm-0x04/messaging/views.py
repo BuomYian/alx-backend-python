@@ -35,8 +35,8 @@ def message_list(request):
     if request.user.is_authenticated:
         # Optimize with prefetch_related for reverse FK
         messages = Message.objects.filter(
-            recipient=request.user
-        ).select_related('sender').order_by('-created_at')[:50]
+            receiver=request.user
+        ).select_related('sender').order_by('-timestamp')[:50]
     else:
         messages = []
 
