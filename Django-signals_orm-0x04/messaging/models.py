@@ -76,3 +76,49 @@ class Message(models.Model):
 
     def __str__(self):
         return f"Message from {self.sender} to {self.recipient}: {self.subject}"
+
+
+class Notification(models.Model):
+    """
+    Stores notifications for users.
+    Automatically created via signals when messages are received.
+    Demonstrates signal-driven, decoupled notification system.
+    """
+    NOTIFICATIONS_TYPES = [
+        ('message_received', 'Message Received'),
+        ('message_read', 'Message Read'),
+        ('user_event', 'User Event'),
+    ]
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='notifications',
+    )
+    notification_type = models.CharField(
+        max_length=50,
+        choices=NOTIFICATIONS_TYPES,
+        db_index=True,
+    )
+    message = models.ForeignKey(
+        Message,
+        on_delete=models.CASCADE,
+        related_name='notifications',
+        null=True,
+        blank=True,
+    )
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    is_read = models.BooleanField(default=False, db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    read_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['user', 'is_read']),
+            models.Index(fields=['user', '-created_at']),
+        ]
+
+    def __str__(self):
+        return f"Notification for {self.user}: {self.title}"
