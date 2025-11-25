@@ -6,6 +6,45 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
+class UnreadMessagesManager(models.Manager):
+    """
+    Custom manager to filter unread messages for a specific user.
+    Optimizes queries by using only() to retrieve only necessary fields.
+    """
+
+    def unread_for_user(self, user):
+        """
+        Returns all unread messages received by a user.
+        Uses only() to optimize database queries by fetching only necessary fields.
+
+        Args:
+            user: The User instance to fetch unread messages for
+
+        Returns:
+            QuerySet of unread messages optimized for minimal data retrieval
+        """
+        return self.filter(
+            receiver=user,
+            is_read=False
+        ).select_related('sender').only(
+            'id',
+            'sender__id',
+            'sender__username',
+            'sender__email',
+            'subject',
+            'content',
+            'timestamp',
+            'is_read',
+        ).order_by('-timestamp')
+
+    def unread_count_for_user(self, user):
+        """
+        Returns the count of unread messages for a user.
+        Optimized query that only counts without fetching full objects.
+        """
+        return self.filter(receiver=user, is_read=False).count()
+
+
 class EventLog(models.Model):
     """
     Logs all events triggered by signals.
@@ -75,6 +114,10 @@ class Message(models.Model):
     edited = models.BooleanField(default=False, db_index=True)
     timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    objects = models.Manager()  # The default manager.
+    # Custom manager for unread messages.
+    unread_messages = UnreadMessagesManager()
 
     class Meta:
         ordering = ['-timestamp']

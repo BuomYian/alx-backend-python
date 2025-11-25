@@ -203,3 +203,109 @@ def delete_user(request):
 
     # For GET requests, return a confirmation page
     return render(request, 'messaging/delete_user_confirm.html')
+
+
+@login_required
+def unread_messages(request):
+    """
+    Display unread messages for the authenticated user.
+    Uses the custom UnreadMessagesManager with .only() optimization.
+
+    New view for displaying unread messages with optimized queries
+    """
+    # Use custom manager to get unread messages with optimized fields
+    unread_msgs = Message.unread.unread_for_user(request.user)
+
+    # Get the count of unread messages
+    unread_count = Message.unread.unread_count_for_user(request.user)
+
+    # Cache the unread count for quick access
+    cache_key = f'unread_count_{request.user.id}'
+    cache.set(cache_key, unread_count, 60)  # Cache for 1 minute
+
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        # Return JSON for AJAX requests
+        messages_data = [
+            {
+                'id': msg.id,
+                'sender': msg.sender.username,
+                'subject': msg.subject,
+                'content': msg.content[:100],  # First 100 chars
+                'timestamp': msg.timestamp.isoformat(),
+            }
+            for msg in unread_msgs
+        ]
+        return JsonResponse({
+            'unread_count': unread_count,
+            'messages': messages_data
+        })
+
+    return render(request, 'messaging/unread_messages.html', {
+        'unread_messages': unread_msgs,
+        'unread_count': unread_count,
+    })
+
+
+@login_required
+def mark_as_read(request, message_id):
+    """
+    Mark a message as read by the current user.
+    Only the receiver can mark a message as read.
+
+    New view for marking messages as read
+    """
+    if request.method == 'POST':
+        try:
+            message = Message.objects.get(id=message_id, receiver=request.user)
+            message.is_read = True
+            message.save(update_fields=['is_read'])
+
+            # Invalidate the unread count cache
+            cache_key = f'unread_count_{request.user.id}'
+            cache.delete(cache_key)
+
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'success': True, 'message': 'Message marked as read'})
+
+            return redirect('unread_messages')
+        except Message.DoesNotExist:
+            return JsonResponse({'error': 'Message not found'}, status=404)
+
+    return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+
+@login_required
+def inbox_dashboard(request):
+    """
+    Display inbox dashboard with unread count and recent messages.
+    Demonstrates efficient use of custom managers and caching.
+
+    New view for inbox dashboard
+    """
+    # Get cached unread count or calculate it
+    cache_key = f'unread_count_{request.user.id}'
+    unread_count = cache.get(cache_key)
+
+    if unread_count is None:
+        unread_count = Message.unread.unread_count_for_user(request.user)
+        cache.set(cache_key, unread_count, 60)
+
+    # Get recent unread messages (first 5)
+    recent_unread = Message.unread.unread_for_user(request.user)[:5]
+
+    # Get all recent messages (read and unread) for context
+    all_recent = Message.objects.filter(
+        receiver=request.user
+    ).select_related('sender').only(
+        'id',
+        'sender__username',
+        'subject',
+        'timestamp',
+        'is_read',
+    ).order_by('-timestamp')[:10]
+
+    return render(request, 'messaging/inbox_dashboard.html', {
+        'unread_count': unread_count,
+        'recent_unread': recent_unread,
+        'all_recent': all_recent,
+    })
