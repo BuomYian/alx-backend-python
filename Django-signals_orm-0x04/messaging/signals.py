@@ -32,34 +32,51 @@ def log_user_created_or_updated(sender, instance, created, **kwargs):
 def cleanup_user_data(sender, instance, **kwargs):
     """
     Signal handler that automatically cleans up all user-related data when a user is deleted.
-    Handles cascading deletion of:
-    - All messages sent by the user (Message model has on_delete=CASCADE)
-    - All messages received by the user (Message model has on_delete=CASCADE)
-    - All notifications for the user (Notification model has on_delete=CASCADE)
-    - All message histories related to user's messages (MessageHistory model has on_delete=CASCADE)
+    Demonstrates custom signal logic for cascading deletion:
+    - Delete all messages sent and received by the user
+    - Delete all notifications for the user
+    - Delete all message histories associated with the user's messages
 
-    This demonstrates how post_delete signals can handle complex cleanup operations
-    while respecting foreign key relationships. The CASCADE constraints are already
-    defined in the models, but this signal provides logging and additional cleanup if needed.
+    This shows how to explicitly handle cleanup operations in signals,
+    ensuring data integrity and providing detailed logging of what was deleted.
     """
     username = instance.username
     user_id = instance.id
 
-    # Note: Due to CASCADE on_delete constraints in the models, related data is
-    # automatically deleted by Django's ORM. However, we log this event for audit purposes.
+    # Delete message histories for messages sent by this user
+    message_history_count = MessageHistory.objects.filter(
+        message__sender_id=user_id
+    ).delete()[0]
 
+    # Delete all messages where user is the sender or receiver
+    messages_sent_count = Message.objects.filter(sender_id=user_id).delete()[0]
+    messages_received_count = Message.objects.filter(
+        receiver_id=user_id).delete()[0]
+
+    # Delete all notifications for the user
+    notifications_count = Notification.objects.filter(
+        user_id=user_id).delete()[0]
+
+    total_items_deleted = (
+        message_history_count +
+        messages_sent_count +
+        messages_received_count +
+        notifications_count
+    )
+
+    # Log the cleanup event for audit purposes
     EventLog.objects.create(
         event_type='user_deleted',
-        description=f"User '{username}' was deleted. All associated messages, notifications, and message histories have been cleaned up.",
+        description=f"User '{username}' account deleted. Cleaned up {total_items_deleted} related records.",
         metadata={
             'username': username,
             'user_id': user_id,
-            'cleanup_type': 'cascade_delete',
-            'deleted_messages': Message.objects.filter(
-                sender_id=user_id
-            ).count() + Message.objects.filter(
-                receiver_id=user_id
-            ).count(),
+            'cleanup_type': 'signal_cascading_delete',
+            'deleted_message_histories': message_history_count,
+            'deleted_messages_sent': messages_sent_count,
+            'deleted_messages_received': messages_received_count,
+            'deleted_notifications': notifications_count,
+            'total_deleted': total_items_deleted,
         }
     )
 
