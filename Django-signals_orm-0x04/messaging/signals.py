@@ -5,7 +5,7 @@ Demonstrates event-driven architecture and best practices.
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.contrib.auth.models import User
-from .models import EventLog, Message, Notification, MessagingHistory
+from .models import EventLog, Message, Notification, MessageHistory
 
 
 @receiver(post_save, sender=User)
@@ -55,7 +55,7 @@ def log_message_sent(sender, instance, created, **kwargs):
 
         if old_instance.content != instance.content or old_instance.subject != instance.subject:
             if old_instance.content != instance.content:
-                MessagingHistory.objects.create(
+                MessageHistory.objects.create(
                     message=instance,
                     old_content=old_instance.content,
                     old_subject=old_instance.subject,

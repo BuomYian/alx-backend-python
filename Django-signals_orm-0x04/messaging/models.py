@@ -78,7 +78,7 @@ class Message(models.Model):
         return f"Message from {self.sender} to {self.receiver}: {self.subject}"
 
 
-class MessagingHistory(models.Model):
+class MessageHistory(models.Model):
     """
     Stores the history of message edits.
     Each time a message is edited, the old content is saved here.
