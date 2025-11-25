@@ -350,3 +350,90 @@ django.db.utils.OperationalError: no such table: chats_user
 2025-11-22 14:43:15,876 - INFO - HTTP/2 support not enabled (install the http2 and tls Twisted extras)
 2025-11-22 14:43:15,882 - INFO - Configuring endpoint tcp:port=8000:interface=127.0.0.1
 2025-11-22 14:43:15,890 - INFO - Listening on TCP address 127.0.0.1:8000
+2025-11-22 14:44:11,245 - INFO - HTTP/2 support not enabled (install the http2 and tls Twisted extras)
+2025-11-22 14:44:11,246 - INFO - Configuring endpoint tcp:port=8000:interface=127.0.0.1
+2025-11-22 14:44:11,248 - INFO - Listening on TCP address 127.0.0.1:8000
+INFO 2025-11-22 14:44:17,834 middleware 8132 8336 Request received - User: Anonymous, Path: /admin/login/
+2025-11-22 14:44:17,834 - INFO - Request received - User: Anonymous, Path: /admin/login/
+2025-11-22 14:44:19,982 - INFO - [32mHTTP POST /admin/login/?next=/admin/ 302 [2.17, 127.0.0.1:62074][0m
+INFO 2025-11-22 14:44:20,002 middleware 8132 8336 Request received - User: admin, Path: /admin/
+2025-11-22 14:44:20,002 - INFO - Request received - User: admin, Path: /admin/
+2025-11-22 14:44:20,109 - INFO - [mHTTP GET /admin/ 200 [0.12, 127.0.0.1:62074][0m
+2025-11-22 14:44:20,219 - INFO - [36mHTTP GET /static/admin/css/base.css 304 [0.04, 127.0.0.1:62074][0m
+2025-11-22 14:44:20,229 - INFO - [36mHTTP GET /static/admin/css/dark_mode.css 304 [0.04, 127.0.0.1:56626][0m
+2025-11-22 14:44:20,318 - INFO - [36mHTTP GET /static/admin/js/theme.js 304 [0.13, 127.0.0.1:58123][0m
+2025-11-22 14:44:20,409 - INFO - [36mHTTP GET /static/admin/css/nav_sidebar.css 304 [0.22, 127.0.0.1:51836][0m
+2025-11-22 14:44:20,416 - INFO - [36mHTTP GET /static/admin/css/responsive.css 304 [0.22, 127.0.0.1:52459][0m
+2025-11-22 14:44:20,544 - INFO - [36mHTTP GET /static/admin/js/nav_sidebar.js 304 [0.02, 127.0.0.1:58123][0m
+2025-11-22 14:44:20,647 - INFO - [mHTTP GET /static/admin/css/dashboard.css 200 [0.45, 127.0.0.1:55365][0m
+2025-11-22 14:44:20,694 - INFO - [mHTTP GET /static/admin/img/icon-changelink.svg 200 [0.02, 127.0.0.1:58123][0m
+2025-11-22 14:44:20,697 - INFO - [mHTTP GET /static/admin/img/icon-addlink.svg 200 [0.03, 127.0.0.1:55365][0m
+INFO 2025-11-22 14:44:27,705 middleware 8132 8336 Request received - User: admin, Path: /admin/
+2025-11-22 14:44:27,705 - INFO - Request received - User: admin, Path: /admin/
+2025-11-22 14:44:27,718 - INFO - [mHTTP GET /admin/ 200 [0.03, 127.0.0.1:58123][0m
+INFO 2025-11-22 14:44:29,214 middleware 8132 8336 Request received - User: admin, Path: /
+2025-11-22 14:44:29,214 - INFO - Request received - User: admin, Path: /
+2025-11-22 14:44:29,235 - WARNING - Not Found: /
+2025-11-22 14:44:29,237 - WARNING - [33mHTTP GET / 404 [0.04, 127.0.0.1:58123][0m
+INFO 2025-11-22 14:44:34,344 middleware 8132 8336 Request received - User: admin, Path: /api/
+2025-11-22 14:44:34,344 - INFO - Request received - User: admin, Path: /api/
+2025-11-22 14:44:34,372 - INFO - [mHTTP GET /api/ 200 [0.04, 127.0.0.1:58123][0m
+2025-11-22 14:44:34,621 - INFO - [36mHTTP GET /static/rest_framework/css/bootstrap-tweaks.css 304 [0.18, 127.0.0.1:55365][0m
+2025-11-22 14:44:34,622 - INFO - [36mHTTP GET /static/rest_framework/css/bootstrap.min.css 304 [0.18, 127.0.0.1:58123][0m
+2025-11-22 14:44:34,623 - INFO - [36mHTTP GET /static/rest_framework/css/prettify.css 304 [0.13, 127.0.0.1:52459][0m
+2025-11-22 14:44:34,624 - INFO - [36mHTTP GET /static/rest_framework/js/jquery-3.7.1.min.js 304 [0.03, 127.0.0.1:56626][0m
+2025-11-22 14:44:34,628 - INFO - [36mHTTP GET /static/rest_framework/css/default.css 304 [0.14, 127.0.0.1:51836][0m
+2025-11-22 14:44:34,632 - INFO - [36mHTTP GET /static/rest_framework/js/ajax-form.js 304 [0.04, 127.0.0.1:62074][0m
+2025-11-22 14:44:34,720 - INFO - [36mHTTP GET /static/rest_framework/js/bootstrap.min.js 304 [0.08, 127.0.0.1:58123][0m
+2025-11-22 14:44:34,721 - INFO - [36mHTTP GET /static/rest_framework/js/csrf.js 304 [0.09, 127.0.0.1:55365][0m
+2025-11-22 14:44:34,722 - INFO - [36mHTTP GET /static/rest_framework/js/load-ajax-form.js 304 [0.02, 127.0.0.1:62074][0m
+2025-11-22 14:44:34,723 - INFO - [36mHTTP GET /static/rest_framework/js/default.js 304 [0.02, 127.0.0.1:52459][0m
+2025-11-22 14:44:34,724 - INFO - [36mHTTP GET /static/rest_framework/js/prettify-min.js 304 [0.02, 127.0.0.1:56626][0m
+2025-11-22 14:44:34,732 - INFO - [36mHTTP GET /static/rest_framework/img/grid.png 304 [0.03, 127.0.0.1:51836][0m
+INFO 2025-11-22 14:44:39,181 middleware 8132 8336 Request received - User: admin, Path: /api/conversations/
+2025-11-22 14:44:39,181 - INFO - Request received - User: admin, Path: /api/conversations/
+2025-11-22 14:44:39,413 - INFO - [mHTTP GET /api/conversations/ 200 [0.25, 127.0.0.1:51836][0m
+2025-11-22 14:44:39,897 - INFO - [mHTTP GET /static/rest_framework/fonts/glyphicons-halflings-regular.woff2 200 [0.03, 127.0.0.1:51836][0m
+INFO 2025-11-22 14:44:48,407 middleware 8132 8336 Request received - User: admin, Path: /api/messages/
+2025-11-22 14:44:48,407 - INFO - Request received - User: admin, Path: /api/messages/
+2025-11-22 14:44:48,651 - INFO - [mHTTP GET /api/messages/ 200 [0.26, 127.0.0.1:51836][0m
+INFO 2025-11-22 14:45:00,213 middleware 8132 8336 Request received - User: admin, Path: /api/users/
+2025-11-22 14:45:00,213 - INFO - Request received - User: admin, Path: /api/users/
+2025-11-22 14:45:00,380 - INFO - [mHTTP GET /api/users/ 200 [0.18, 127.0.0.1:51836][0m
+INFO 2025-11-22 14:48:10,282 middleware 8132 8336 Request received - User: admin, Path: /api/users/
+2025-11-22 14:48:10,282 - INFO - Request received - User: admin, Path: /api/users/
+2025-11-22 14:48:10,299 - INFO - [mHTTP GET /api/users/ 200 [0.03, 127.0.0.1:52228][0m
+2025-11-22 14:48:10,376 - INFO - [36mHTTP GET /static/rest_framework/css/bootstrap.min.css 304 [0.02, 127.0.0.1:52228][0m
+2025-11-22 14:48:10,379 - INFO - [36mHTTP GET /static/rest_framework/css/bootstrap-tweaks.css 304 [0.02, 127.0.0.1:61843][0m
+2025-11-22 14:48:10,382 - INFO - [36mHTTP GET /static/rest_framework/css/prettify.css 304 [0.02, 127.0.0.1:50816][0m
+2025-11-22 14:48:10,388 - INFO - [36mHTTP GET /static/rest_framework/css/default.css 304 [0.03, 127.0.0.1:52575][0m
+2025-11-22 14:48:10,390 - INFO - [36mHTTP GET /static/rest_framework/js/jquery-3.7.1.min.js 304 [0.03, 127.0.0.1:55298][0m
+2025-11-22 14:48:10,395 - INFO - [36mHTTP GET /static/rest_framework/js/ajax-form.js 304 [0.03, 127.0.0.1:64976][0m
+2025-11-22 14:48:10,409 - INFO - [36mHTTP GET /static/rest_framework/js/csrf.js 304 [0.03, 127.0.0.1:52228][0m
+2025-11-22 14:48:10,414 - INFO - [36mHTTP GET /static/rest_framework/js/bootstrap.min.js 304 [0.02, 127.0.0.1:61843][0m
+2025-11-22 14:48:10,448 - INFO - [36mHTTP GET /static/rest_framework/js/prettify-min.js 304 [0.06, 127.0.0.1:50816][0m
+2025-11-22 14:48:10,452 - INFO - [36mHTTP GET /static/rest_framework/js/load-ajax-form.js 304 [0.05, 127.0.0.1:55298][0m
+2025-11-22 14:48:10,456 - INFO - [36mHTTP GET /static/rest_framework/js/default.js 304 [0.06, 127.0.0.1:52575][0m
+2025-11-22 14:48:10,489 - INFO - [36mHTTP GET /static/rest_framework/img/grid.png 304 [0.04, 127.0.0.1:52228][0m
+2025-11-22 14:48:10,500 - INFO - [36mHTTP GET /static/rest_framework/fonts/glyphicons-halflings-regular.woff2 304 [0.02, 127.0.0.1:50816][0m
+INFO 2025-11-22 14:48:17,262 middleware 8132 8336 Request received - User: admin, Path: /api/users/
+2025-11-22 14:48:17,262 - INFO - Request received - User: admin, Path: /api/users/
+2025-11-22 14:48:17,281 - INFO - [mHTTP GET /api/users/ 200 [0.03, 127.0.0.1:50816][0m
+INFO 2025-11-22 14:48:18,937 middleware 8132 8336 Request received - User: admin, Path: /api/users/
+2025-11-22 14:48:18,937 - INFO - Request received - User: admin, Path: /api/users/
+2025-11-22 14:48:18,949 - INFO - [mHTTP OPTIONS /api/users/ 200 [0.02, 127.0.0.1:50816][0m
+INFO 2025-11-22 14:48:20,286 middleware 8132 8336 Request received - User: admin, Path: /api/users/
+2025-11-22 14:48:20,286 - INFO - Request received - User: admin, Path: /api/users/
+2025-11-22 14:48:20,293 - INFO - [mHTTP OPTIONS /api/users/ 200 [0.01, 127.0.0.1:50816][0m
+INFO 2025-11-22 14:48:21,551 middleware 8132 8336 Request received - User: admin, Path: /api/users/
+2025-11-22 14:48:21,551 - INFO - Request received - User: admin, Path: /api/users/
+2025-11-22 14:48:21,560 - INFO - [mHTTP OPTIONS /api/users/ 200 [0.02, 127.0.0.1:50816][0m
+INFO 2025-11-22 14:48:22,835 middleware 8132 8336 Request received - User: admin, Path: /api/users/
+2025-11-22 14:48:22,835 - INFO - Request received - User: admin, Path: /api/users/
+2025-11-22 14:48:22,851 - INFO - [mHTTP GET /api/users/ 200 [0.03, 127.0.0.1:50816][0m
+INFO 2025-11-22 14:48:31,394 middleware 8132 8336 Request received - User: admin, Path: /api/users/
+2025-11-22 14:48:31,394 - INFO - Request received - User: admin, Path: /api/users/
+2025-11-22 14:48:31,410 - INFO - [mHTTP GET /api/users/?search=admin 200 [0.02, 127.0.0.1:50816][0m
+INFO 2025-11-22 14:48:40,301 middleware 8132 8336 Request received - User: admin, Path: /api/users/
+2025-11-22 14:48:40,301 - INFO - Request received - User: admin, Path: /api/users/
+2025-11-22 14:48:40,317 - INFO - [mHTTP GET /api/users/?search=yian 200 [0.03, 127.0.0.1:50816][0m

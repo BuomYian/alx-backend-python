@@ -1,0 +1,78 @@
+"""
+Models for the messaging app.
+Demonstrates efficient database design for event handling.
+"""
+from django.db import models
+from django.contrib.auth.models import User
+
+
+class EventLog(models.Model):
+    """
+    Logs all events triggered by signals.
+    Useful for debugging and understanding signal behavior.
+    """
+    EVENT_TYPES = [
+        ('user_created', 'User Created'),
+        ('user_updated', 'User Updated'),
+        ('user_deleted', 'User Deleted'),
+        ('email_sent', 'Email Sent'),
+        ('notification_sent', 'Notification Sent'),
+    ]
+
+    event_type = models.CharField(
+        max_length=50,
+        choices=EVENT_TYPES,
+        db_index=True,
+    )
+    related_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='event_logs',
+        null=True,
+        blank=True,
+    )
+    description = models.TextField()
+    metadata = models.JSONField(default=dict, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['event_type', '-created_at']),
+        ]
+
+    def __str__(self):
+        return f"{self.get_event_type_display()} - {self.created_at}"
+
+
+class Message(models.Model):
+    """
+    Represents a message in the system.
+    Demonstrates ORM relationships and query optimization.
+    """
+    sender = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='sent_messages',
+    )
+    recipient = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='received_messages',
+    )
+    subject = models.CharField(max_length=200)
+    content = models.TextField()
+    is_read = models.BooleanField(default=False, db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['recipient', 'is_read']),
+            models.Index(fields=['sender', '-created_at']),
+        ]
+
+    def __str__(self):
+        return f"Message from {self.sender} to {self.recipient}: {self.subject}"
