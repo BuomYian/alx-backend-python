@@ -61,9 +61,18 @@ class Message(models.Model):
         on_delete=models.CASCADE,
         related_name='received_messages',
     )
+    parent_message = models.ForeignKey(
+        'self',
+        on_delete=models.CASCADE,
+        related_name='replies',
+        null=True,
+        blank=True,
+        db_index=True,
+    )
     subject = models.CharField(max_length=200)
     content = models.TextField()
     is_read = models.BooleanField(default=False, db_index=True)
+    edited = models.BooleanField(default=False, db_index=True)
     timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -72,10 +81,24 @@ class Message(models.Model):
         indexes = [
             models.Index(fields=['receiver', 'is_read']),
             models.Index(fields=['sender', '-timestamp']),
+            models.Index(fields=['parent_message', '-timestamp']),
         ]
 
     def __str__(self):
         return f"Message from {self.sender} to {self.receiver}: {self.subject}"
+
+    def get_all_replies(self):
+        """
+        Retrieve all replies to this message using prefetch_related for optimization.
+        """
+        replies = []
+        direct_replies = self.replies.all()
+
+        for reply in direct_replies:
+            replies.append(reply)
+            replies.extend(reply.get_all_replies())
+
+        return replies
 
 
 class MessageHistory(models.Model):
