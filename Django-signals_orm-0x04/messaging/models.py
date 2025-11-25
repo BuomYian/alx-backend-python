@@ -33,17 +33,17 @@ class EventLog(models.Model):
     )
     description = models.TextField()
     metadata = models.JSONField(default=dict, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ['-timestamp']
         indexes = [
-            models.Index(fields=['event_type', '-created_at']),
+            models.Index(fields=['event_type', '-timestamp']),
         ]
 
     def __str__(self):
-        return f"{self.get_event_type_display()} - {self.created_at}"
+        return f"{self.get_event_type_display()} - {self.timestamp}"
 
 
 class Message(models.Model):
@@ -56,7 +56,7 @@ class Message(models.Model):
         on_delete=models.CASCADE,
         related_name='sent_messages',
     )
-    recipient = models.ForeignKey(
+    receiver = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='received_messages',
@@ -64,18 +64,18 @@ class Message(models.Model):
     subject = models.CharField(max_length=200)
     content = models.TextField()
     is_read = models.BooleanField(default=False, db_index=True)
-    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ['-timestamp']
         indexes = [
-            models.Index(fields=['recipient', 'is_read']),
-            models.Index(fields=['sender', '-created_at']),
+            models.Index(fields=['receiver', 'is_read']),
+            models.Index(fields=['sender', '-timestamp']),
         ]
 
     def __str__(self):
-        return f"Message from {self.sender} to {self.recipient}: {self.subject}"
+        return f"Message from {self.sender} to {self.receiver}: {self.subject}"
 
 
 class Notification(models.Model):
@@ -110,14 +110,14 @@ class Notification(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
     is_read = models.BooleanField(default=False, db_index=True)
-    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
     read_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ['-timestamp']
         indexes = [
             models.Index(fields=['user', 'is_read']),
-            models.Index(fields=['user', '-created_at']),
+            models.Index(fields=['user', '-timestamp']),
         ]
 
     def __str__(self):

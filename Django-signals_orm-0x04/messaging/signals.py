@@ -52,7 +52,7 @@ def create_notification_on_message(sender, instance, created, **kwargs):
     """
     if created:
         Notification.objects.create(
-            user=instance.recipient,
+            user=instance.receiver,
             notification_type='message_received',
             message=instance,
             title=f"New message from {instance.sender.username}",
@@ -62,12 +62,12 @@ def create_notification_on_message(sender, instance, created, **kwargs):
         # Log the notification event
         EventLog.objects.create(
             event_type='notification_sent',
-            related_user=instance.recipient,
+            related_user=instance.receiver,
             description=f"Notification created for message '{instance.subject}'",
             metadata={
                 'message_id': instance.id,
                 'sender_id': instance.sender.id,
                 'subject': instance.subject,
-                'recipient_id': instance.recipient.id,
+                'receiver_id': instance.receiver.id,
             }
         )
