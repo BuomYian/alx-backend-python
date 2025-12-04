@@ -5,6 +5,7 @@ services:
     image: mysql:8.0
     restart: always
     environment:
+      MYSQL_DB: ${MYSQL_DATABASE}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
@@ -16,7 +17,7 @@ services:
 
   web:
     build: .
-    command: ./wait-for-it.sh db:3306 -- python manage.py runserver 0.0.0.0:8000
+    command: sh -c "python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/app
     ports:
