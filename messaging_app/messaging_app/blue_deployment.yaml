@@ -1,22 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: messaging-app
+  name: messaging-app-blue
   labels:
     app: messaging-app
+    version: blue
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: messaging-app
+      version: blue
   template:
     metadata:
       labels:
         app: messaging-app
+        version: blue
     spec:
       containers:
-        - name: messaging-app
-          image: buomyian/messaging-app:latest
+        - name: messaging-app-container
+          image: buomyian/messaging-app:blue
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
