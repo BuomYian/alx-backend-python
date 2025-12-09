@@ -1,0 +1,29 @@
+#!/bin/bash
+
+set -e
+
+DEPLOYMENT="messaging-app-blue"
+SERVICE_HOST="localhost"
+SERVICE_PORT="8000"
+ENDPOINT="http://$SERVICE_HOST:$SERVICE_PORT/"
+
+echo "🚀 Applying updated blue_deployment.yaml (image version 2.0)..."
+kubectl apply -f blue_deployment.yaml
+
+echo "🔄 Triggering rolling update..."
+kubectl rollout status deployment/$DEPLOYMENT
+
+echo "🌐 Starting continuous curl test to detect downtime..."
+echo "Press CTRL + C to stop."
+
+for i in {1..20}
+do
+  RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" $ENDPOINT)
+  echo "Request $i → Status: $RESPONSE"
+  sleep 1
+done
+
+echo "📌 Checking current running pods..."
+kubectl get pods -l app=messaging-app -o wide
+
+echo "🎉 Rolling update completed successfully!"

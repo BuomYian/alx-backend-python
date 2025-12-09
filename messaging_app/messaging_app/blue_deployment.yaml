@@ -7,6 +7,11 @@ metadata:
     version: blue
 spec:
   replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
   selector:
     matchLabels:
       app: messaging-app
@@ -19,10 +24,10 @@ spec:
     spec:
       containers:
         - name: messaging-app-container
-          image: buomyian/messaging-app:blue
+          image: buommie/messaging-app:blue
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 8080
+            - containerPort: 8000
           env:
             - name: DJANGO_SETTINGS_MODULE
               value: "messaging_app.settings"
