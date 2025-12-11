@@ -1,2 +1,34 @@
+# Commands for Setting Up Kubernetes Ingress for External Access
+
+# Step 1: Enable Nginx Ingress Controller in Minikube
 minikube addons enable ingress
+
+# Step 2: Verify Ingress Controller is Running
+kubectl get pods -n ingress-nginx
+
+# Step 3: Apply the Ingress Configuration
 kubectl apply -f ingress.yaml
+
+# Step 4: Verify Ingress Resource is Created
+kubectl get ingress django-messaging-ingress
+
+# Step 5: Describe Ingress to See Details
+kubectl describe ingress django-messaging-ingress
+
+# Step 6: Get Minikube IP Address
+minikube ip
+
+# Step 7: Add Host Entry to /etc/hosts (replace <MINIKUBE_IP> with actual IP from step 6)
+# echo "<MINIKUBE_IP> django-messaging.local" | sudo tee -a /etc/hosts
+
+# Step 8: Test External Access
+# curl http://django-messaging.local/api/
+# curl http://django-messaging.local/admin/
+
+# Alternative: Use Minikube Tunnel for Direct Access
+# minikube tunnel
+
+# Useful Debugging Commands:
+# kubectl logs -n ingress-nginx -l app.kubernetes.io/name=ingress-nginx
+# kubectl get svc -n ingress-nginx
+# kubectl get endpoints django-messaging-service

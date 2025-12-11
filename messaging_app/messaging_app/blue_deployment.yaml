@@ -1,47 +1,56 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: messaging-app-blue
+  name: django-messaging-blue
   labels:
-    app: messaging-app
+    app: django-messaging
     version: blue
 spec:
-  replicas: 1
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 0
-      maxSurge: 1
+  replicas: 3
   selector:
     matchLabels:
-      app: messaging-app
+      app: django-messaging
       version: blue
   template:
     metadata:
       labels:
-        app: messaging-app
+        app: django-messaging
         version: blue
     spec:
       containers:
-        - name: messaging-app-container
-          image: buommie/messaging-app:blue
-          imagePullPolicy: IfNotPresent
-          ports:
-            - containerPort: 8000
-          env:
-            - name: DJANGO_SETTINGS_MODULE
-              value: "messaging_app.settings"
-
-# ---
-# apiVersion: v1
-# kind: Service
-# metadata:
-#   name: messaging-app-service
-# spec:
-#   type: ClusterIP
-#   selector:
-#     app: messaging-app
-#   ports:
-#     - name: http
-#       port: 8000
-#       targetPort: 8080
+      - name: django-app
+        image: django-messaging-app:2.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8000
+          name: http
+        env:
+        - name: DJANGO_SETTINGS_MODULE
+          value: "messaging_app.settings"
+        - name: PYTHONUNBUFFERED
+          value: "1"
+        - name: APP_VERSION
+          value: "blue-2.0"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /api/
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /api/
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3

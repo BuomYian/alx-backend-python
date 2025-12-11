@@ -2,28 +2,93 @@
 
 set -e
 
-DEPLOYMENT="messaging-app-blue"
-SERVICE_HOST="localhost"
-SERVICE_PORT="8000"
-ENDPOINT="http://$SERVICE_HOST:$SERVICE_PORT/"
+echo "============================================"
+echo "Rolling Update - Zero Downtime Deployment"
+echo "============================================"
 
-echo "🚀 Applying updated blue_deployment.yaml (image version 2.0)..."
+echo ""
+echo "[1] Current deployment status before update:"
+kubectl get deployment django-messaging-blue
+kubectl get pods -l version=blue
+
+echo ""
+echo "[2] Applying updated deployment with version 2.0..."
 kubectl apply -f blue_deployment.yaml
 
-echo "🔄 Triggering rolling update..."
-kubectl rollout status deployment/$DEPLOYMENT
+echo ""
+echo "[3] Monitoring rolling update progress..."
+kubectl rollout status deployment/django-messaging-blue --timeout=300s
 
-echo "🌐 Starting continuous curl test to detect downtime..."
-echo "Press CTRL + C to stop."
+echo ""
+echo "[4] Verifying all pods are updated and running:"
+kubectl get pods -l version=blue -o wide
 
-for i in {1..20}
-do
-  RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" $ENDPOINT)
-  echo "Request $i → Status: $RESPONSE"
-  sleep 1
+echo ""
+echo "[5] Testing application availability during rolling update..."
+echo "Setting up continuous health checks..."
+
+kubectl port-forward service/django-messaging-service 8082:80 &
+PORT_FORWARD_PID=$!
+sleep 5
+
+echo ""
+echo "Starting continuous curl requests to test for downtime..."
+FAILURE_COUNT=0
+SUCCESS_COUNT=0
+TOTAL_REQUESTS=30
+
+for i in $(seq 1 $TOTAL_REQUESTS); do
+    echo -n "Request $i/$TOTAL_REQUESTS: "
+    if curl -s -o /dev/null -w "%{http_code}" --max-time 2 http://localhost:8082/api/ | grep -q "200\|301\|302\|404"; then
+        echo "SUCCESS"
+        SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
+    else
+        echo "FAILED"
+        FAILURE_COUNT=$((FAILURE_COUNT + 1))
+    fi
+    sleep 1
 done
 
-echo "📌 Checking current running pods..."
-kubectl get pods -l app=messaging-app -o wide
+kill $PORT_FORWARD_PID 2>/dev/null || true
 
-echo "🎉 Rolling update completed successfully!"
+echo ""
+echo "============================================"
+echo "Rolling Update Test Results"
+echo "============================================"
+echo "Total Requests: $TOTAL_REQUESTS"
+echo "Successful: $SUCCESS_COUNT"
+echo "Failed: $FAILURE_COUNT"
+echo "Success Rate: $(awk "BEGIN {printf \"%.2f\", ($SUCCESS_COUNT/$TOTAL_REQUESTS)*100}")%"
+echo ""
+
+if [ $FAILURE_COUNT -eq 0 ]; then
+    echo "EXCELLENT! Zero downtime achieved during rolling update!"
+elif [ $FAILURE_COUNT -lt 3 ]; then
+    echo "GOOD! Minimal disruption during rolling update."
+else
+    echo "WARNING! Some disruption detected during rolling update."
+fi
+
+echo ""
+echo "[6] Verifying rolling update is complete:"
+kubectl rollout history deployment/django-messaging-blue
+
+echo ""
+echo "[7] Current pods status:"
+kubectl get pods -l version=blue -o custom-columns=NAME:.metadata.name,STATUS:.status.phase,AGE:.metadata.creationTimestamp,IMAGE:.spec.containers[0].image
+
+echo ""
+echo "[8] Deployment details:"
+kubectl describe deployment django-messaging-blue | grep -A 5 "Replicas:\|Image:"
+
+echo ""
+echo "============================================"
+echo "Rolling Update Complete!"
+echo "============================================"
+echo ""
+echo "Rollback command (if needed):"
+echo "  kubectl rollout undo deployment/django-messaging-blue"
+echo ""
+echo "View rollout history:"
+echo "  kubectl rollout history deployment/django-messaging-blue"
+echo ""

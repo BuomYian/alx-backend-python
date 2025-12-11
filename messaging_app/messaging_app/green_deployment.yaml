@@ -1,27 +1,56 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: messaging-app-green
+  name: django-messaging-green
   labels:
-    app: messaging-app
+    app: django-messaging
     version: green
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
-      app: messaging-app
+      app: django-messaging
       version: green
   template:
     metadata:
       labels:
-        app: messaging-app
+        app: django-messaging
         version: green
     spec:
       containers:
-        - name: messaging-app-container
-          image: your-dockerhub-username/messaging_app:green
-          ports:
-            - containerPort: 8000
-          env:
-            - name: DJANGO_SETTINGS_MODULE
-              value: "messaging_app.settings"
+      - name: django-app
+        image: django-messaging-app:1.5
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8000
+          name: http
+        env:
+        - name: DJANGO_SETTINGS_MODULE
+          value: "messaging_app.settings"
+        - name: PYTHONUNBUFFERED
+          value: "1"
+        - name: APP_VERSION
+          value: "green-1.5"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /api/
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /api/
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
