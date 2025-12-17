@@ -1,0 +1,72 @@
+pipeline {
+    agent any
+
+    environment {
+        VENV_DIR = 'venv'
+    }
+
+    stages {
+
+        stage('Checkout Code') {
+            steps {
+                get credentialsId: 'github-credentials',
+                url: 'https://github.com/BuomYian/alx-backend-python.git',
+                branch: 'main'
+            }
+        }
+
+        stage('Setup Virtual Environment') {
+            steps {
+                sh '''
+                    python3 -m venv ${VENV_DIR}
+                    source ${VENV_DIR}/bin/activate
+                    pip install --upgrade pip
+                    pip install -r messaging_app/requirements.txt
+                    pip install pytest pytest-django pytest-cov
+                '''
+            }
+        }
+
+        stage('Run Tests with Pytest') {
+            steps {
+                sh '''
+                    . ${VENV_DIR}/bin/activate
+                    pytest messaging_app/chats/tests.py \
+                        --junitxml=test-results.xml
+                '''
+            }
+        }
+
+        stage('Publish Test Report') {
+            steps {
+                junit 'test-results.xml'
+            }
+        }
+    }
+
+    post {
+        always {
+            // Publish test results
+            junit allowEmptyResults: true, testResults: 'reports/test-results.xml'
+            
+            // Archive coverage reports
+            publishHTML(target: [
+                allowMissing: true,
+                alwaysLinkToLastBuild: true,
+                keepAll: true,
+                reportDir: 'reports/htmlcov',
+                reportFiles: 'index.html',
+                reportName: 'Coverage Report'
+            ])
+            
+            // Clean up workspace
+            cleanWs()
+        }
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed. Check the logs for details.'
+        }
+    }
+}
