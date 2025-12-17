@@ -11,7 +11,7 @@ pipeline {
             steps {
                 get credentialsId: 'github-credentials',
                 url: 'https://github.com/BuomYian/alx-backend-python.git',
-                branch: 'main'
+                git branch: 'main'
             }
         }
 
